@@ -37,6 +37,19 @@ Die Software erkennt die angezeigten Werte mithilfe von KI (OpenAI) und stellt s
 - Tests: JUnit (Backend), Playwright (Frontend)
 - Dokumentation: README.md für Frontend und Backend
 
+### 4.3 UI Aufbau
+- Das UI soll aus aus der Haputseite 'dashboard' bestehen. 
+- Auf der linken Hälfte des Dashboards soll das Video der angeschlossenen Kamera dargestellt werden. 
+  - Name der UI-Komponente: VideoViewer
+- Rechte Seite im oberen Teil: Komponente 'Settings' 
+  - Eingabefeld: 'Prüfmittel', 50 Character
+  - Eingabefeld 'Bemerkung', 1000 Character
+  - Eingeabefelder mit den Koordinaten der zuvor im VideoViewer markierten Bildausschnittes
+  - Button mit der ID 'triggerAI' und der Aufschrift 'Wert erkennen'
+- Rechte Seite im unterer Teil: Komponente 'Preview'    
+  - Darin soll der Bildausschnitt des zuvor markierten Bereiches der VideoViewer Komponente dargestellt werden
+- Mir jedem Klick auf der triggerAI Button soll der Bildausschnitt aktualisiert werden und der Bildausschnitt an das Backend API /api/measurements gesendet werden
+
 ## 5. Nicht-funktionale Anforderungen
 - Genauigkeit: ≥ 98 % Erkennungsrate
 - Latenz: < 1 Sekunde
