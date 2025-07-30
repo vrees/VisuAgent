@@ -1,0 +1,16 @@
+# Node
+node_modules/
+dist/
+
+# Angular
+.angular/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment
+.env

@@ -1,0 +1,10 @@
+<mat-card>
+  <h2>Video Stream</h2>
+  <div style="position: relative;">
+    <video #video width="100%" controls (loadedmetadata)="onVideoLoaded(video)" (click)="onVideoClick($event, video)">
+      <source src="/api/stream" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <canvas #canvas style="position: absolute; top: 0; left: 0; pointer-events: none;"></canvas>
+  </div>
+</mat-card>

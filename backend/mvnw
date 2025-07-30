@@ -1,0 +1,13 @@
+#!/bin/sh
+# ----------------------------------------------------------------------------
+# Maven Wrapper Startup Script
+# ----------------------------------------------------------------------------
+
+MVNW_CMD=".mvn/wrapper/maven-wrapper.jar"
+
+if [ ! -f "$MVNW_CMD" ]; then
+  echo "Maven wrapper JAR not found!"
+  exit 1
+fi
+
+exec java -jar "$MVNW_CMD" "$@"

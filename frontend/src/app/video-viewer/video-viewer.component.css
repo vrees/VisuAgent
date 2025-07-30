@@ -1,0 +1,3 @@
+:host { display: block; }
+mat-card { position: relative; }
+canvas { border: 1px solid #ccc; cursor: crosshair; }
