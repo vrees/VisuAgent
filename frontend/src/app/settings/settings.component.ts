@@ -40,6 +40,8 @@ import { AppState } from '../store';
 })
 export class SettingsComponent {
   @Output() triggerAI = new EventEmitter<void>();
-  roi$ = this.store.pipe(select(state => state.measurement.roi));
-  constructor(private store: Store<AppState>) {}
+  roi$;
+  constructor(private store: Store<AppState>) {
+    this.roi$ = this.store.pipe(select(state => state.measurement.roi));
+  }
 }

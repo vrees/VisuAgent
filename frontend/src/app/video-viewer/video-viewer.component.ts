@@ -18,9 +18,11 @@ export class VideoViewerComponent implements AfterViewInit {
   private startX = 0;
   private startY = 0;
   private roi: { x: number, y: number, width: number, height: number } | null = null;
-  roi$ = this.store.pipe(select(state => state.measurement.roi));
+  roi$;
 
-  constructor(private store: Store<AppState>, private measurementService: MeasurementService) {}
+  constructor(private store: Store<AppState>, private measurementService: MeasurementService) {
+    this.roi$ = this.store.pipe(select(state => state.measurement.roi));
+  }
   /**
    * Extrahiert den aktuellen ROI aus dem Video und sendet ihn an das Backend.
    */

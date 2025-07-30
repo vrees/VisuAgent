@@ -8,8 +8,10 @@ import { AppState } from '../store';
     <mat-card>
       <h2>Preview</h2>
       <div style="height: 200px; background: #eee; display: flex; align-items: center; justify-content: center; flex-direction: column;">
-        <ng-container *ngIf="(value$ | async) as value && (unit$ | async) as unit; else noValue">
-          <span style="font-size: 2em;">{{ value }} {{ unit }}</span>
+        <ng-container *ngIf="value$ | async as value; else noValue">
+          <ng-container *ngIf="unit$ | async as unit; else noValue">
+            <span style="font-size: 2em;">{{ value }} {{ unit }}</span>
+          </ng-container>
         </ng-container>
         <ng-template #noValue>
           <span>Preview of selected ROI</span>
@@ -20,7 +22,10 @@ import { AppState } from '../store';
   styles: [':host { display: block; }']
 })
 export class PreviewComponent {
-  value$ = this.store.pipe(select(state => state.measurement.value));
-  unit$ = this.store.pipe(select(state => state.measurement.unit));
-  constructor(private store: Store<AppState>) {}
+  value$;
+  unit$;
+  constructor(private store: Store<AppState>) {
+    this.value$ = this.store.pipe(select(state => state.measurement.value));
+    this.unit$ = this.store.pipe(select(state => state.measurement.unit));
+  }
 }
