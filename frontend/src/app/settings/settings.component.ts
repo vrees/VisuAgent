@@ -3,8 +3,8 @@ import { Store, select } from '@ngrx/store';
 import { AppState } from '../store';
 
 @Component({
-  selector: 'app-settings',
-  template: `
+    selector: 'app-settings',
+    template: `
     <mat-card>
       <h2>Settings</h2>
       <mat-form-field appearance="fill">
@@ -36,7 +36,8 @@ import { AppState } from '../store';
       <button mat-raised-button color="primary" id="triggerAI" (click)="triggerAI.emit()">Wert erkennen</button>
     </mat-card>
   `,
-  styles: [':host { display: block; }']
+    styles: [':host { display: block; }'],
+    standalone: false
 })
 export class SettingsComponent {
   @Output() triggerAI = new EventEmitter<void>();

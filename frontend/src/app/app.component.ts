@@ -2,8 +2,8 @@ import { Component, ViewChild } from '@angular/core';
 import { VideoViewerComponent } from './video-viewer/video-viewer.component';
 
 @Component({
-  selector: 'app-root',
-  template: `
+    selector: 'app-root',
+    template: `
     <mat-toolbar color="primary">VisuAgent Dashboard</mat-toolbar>
     <div style="display: flex; height: 100vh;">
       <div style="flex: 1;">
@@ -15,7 +15,8 @@ import { VideoViewerComponent } from './video-viewer/video-viewer.component';
       </div>
     </div>
   `,
-  styles: []
+    styles: [],
+    standalone: false
 })
 export class AppComponent {
   @ViewChild('videoViewer') videoViewer!: VideoViewerComponent;

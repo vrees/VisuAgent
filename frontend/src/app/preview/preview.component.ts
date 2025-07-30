@@ -3,8 +3,8 @@ import { Store, select } from '@ngrx/store';
 import { AppState } from '../store';
 
 @Component({
-  selector: 'app-preview',
-  template: `
+    selector: 'app-preview',
+    template: `
     <mat-card>
       <h2>Preview</h2>
       <div style="height: 200px; background: #eee; display: flex; align-items: center; justify-content: center; flex-direction: column;">
@@ -19,7 +19,8 @@ import { AppState } from '../store';
       </div>
     </mat-card>
   `,
-  styles: [':host { display: block; }']
+    styles: [':host { display: block; }'],
+    standalone: false
 })
 export class PreviewComponent {
   value$;

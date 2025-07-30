@@ -6,9 +6,10 @@ import { MeasurementService } from '../services/measurement.service';
 import { setMeasurement } from '../store/measurement.actions';
 
 @Component({
-  selector: 'app-video-viewer',
-  templateUrl: './video-viewer.component.html',
-  styleUrls: ['./video-viewer.component.css']
+    selector: 'app-video-viewer',
+    templateUrl: './video-viewer.component.html',
+    styleUrls: ['./video-viewer.component.css'],
+    standalone: false
 })
 export class VideoViewerComponent implements AfterViewInit {
   @ViewChild('video') videoRef!: ElementRef<HTMLVideoElement>;
