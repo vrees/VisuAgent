@@ -15,7 +15,12 @@ class MeasurementServiceTest {
 
     @Test
     void extractMeasurement_returnsStaticValue() {
-        MeasurementService service = new MeasurementService();
+        // OpenAiServiceWrapper mocken
+        OpenAiServiceWrapper openAiServiceWrapper = org.mockito.Mockito.mock(OpenAiServiceWrapper.class);
+        org.mockito.Mockito.when(openAiServiceWrapper.extractMeasurement(org.mockito.Mockito.anyString(), org.mockito.Mockito.anyString()))
+                .thenReturn("23.5 Newton");
+
+        MeasurementService service = new MeasurementService(openAiServiceWrapper);
         MockMultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpeg", new byte[]{1,2,3});
         MeasurementResponse response = service.extractMeasurement(file, "Extract the measurement value and unit from the image");
         assertEquals("23.5", response.getValue());
