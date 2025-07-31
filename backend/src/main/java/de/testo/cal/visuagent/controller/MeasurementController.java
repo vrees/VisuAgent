@@ -1,9 +1,8 @@
 package de.testo.cal.visuagent.controller;
 
-import de.testo.cal.visuagent.model.MeasurementRequest;
 import de.testo.cal.visuagent.model.MeasurementResponse;
 import de.testo.cal.visuagent.service.MeasurementService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,14 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @RestController
 @RequestMapping("/api/measurements")
+@RequiredArgsConstructor
 public class MeasurementController {
 
     private final MeasurementService measurementService;
-
-    @Autowired
-    public MeasurementController(MeasurementService measurementService) {
-        this.measurementService = measurementService;
-    }
 
     /**
      * Receives an image and ROI, sends it to the AI, and returns the measurement value and unit.
