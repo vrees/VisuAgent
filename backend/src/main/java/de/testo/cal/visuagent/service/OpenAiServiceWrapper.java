@@ -19,11 +19,13 @@ public class OpenAiServiceWrapper {
 
     private OpenAiService openAiService;
 
-    @Value("${openai.api.key}")
+//    @Value("${openai.api.key}")
     String apiKey;
 
     @PostConstruct
     void init() {
+        apiKey = System.getenv("OPENAI_API_KEY");
+
         if (apiKey == null || apiKey.isBlank()) {
             throw new IllegalStateException("OPENAI_API_KEY environment variable is not set");
         }
