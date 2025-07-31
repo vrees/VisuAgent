@@ -32,6 +32,7 @@ This is the backend service for VisuAgent, built with Spring Boot 3.5.4 and Java
 - For integration tests, use the `integrationtest` Spring profile.
 - Hardware dependencies are mocked in tests.
 - OpenAI integration is optional and demo only (see `application-openai.properties`).
+- set Envirenment Vaiable in /etc/environment (not in ~/.bashrc): OPENAI_API_KEY="sk-pr...."
 
 ---
 
