@@ -4,7 +4,8 @@ import { VideoViewerComponent } from './video-viewer/video-viewer.component';
 import { SettingsComponent } from './settings/settings.component';
 
 const routes: Routes = [
-  { path: '', component: VideoViewerComponent },
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  { path: 'dashboard', component: VideoViewerComponent },
   { path: 'settings', component: SettingsComponent }
 ];
 
