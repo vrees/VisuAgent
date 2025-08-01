@@ -53,14 +53,16 @@ public class OpenAiServiceWrapper {
 
         ResponseCreateParams params = ResponseCreateParams.builder()
                 .input(prompt)
-                .model(ChatModel.GPT_4_1)
+                .model(ChatModel.GPT_4_1_MINI)
+                .store(false)
+                .input("data:image/png;base64," + base64Image)
                 .build();
 
 
         try {
             Response response = client.responses().create(params);
 
-            log.info(response.toString());
+            log.info(response.output().toString());
 
             return response.toString();
         } catch (Exception e) {
