@@ -6,18 +6,19 @@ package de.testo.cal.visuagent.model;
  * @author GitHub Copilot
  */
 public class MeasurementResponse {
-    private String value;
-    private String unit;
 
-    public MeasurementResponse() {}
-    public MeasurementResponse(String value, String unit) {
+    public float value;
+
+    public String unit;
+
+    public MeasurementResponse(float value, String unit) {
         this.value = value;
         this.unit = unit;
     }
 
-    // Getter und Setter
-    public String getValue() { return value; }
-    public void setValue(String value) { this.value = value; }
-    public String getUnit() { return unit; }
-    public void setUnit(String unit) { this.unit = unit; }
+
+    @Override
+    public String toString() {
+        return value + " " + unit;
+    }
 }

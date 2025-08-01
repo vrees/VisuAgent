@@ -18,6 +18,13 @@ import java.util.regex.Pattern;
 @Slf4j
 @Service
 public class MeasurementService {
+
+    public static final String PROMPT = """
+            Extract the measurement value and unit from the image.
+            Return the result as JSON using following fields:
+            value (float) and unit (String)
+            """  ;
+
     private final OpenAiServiceWrapper openAiServiceWrapper;
 
     public MeasurementService(OpenAiServiceWrapper openAiServiceWrapper) {
@@ -28,28 +35,19 @@ public class MeasurementService {
      * Extracts measurement value and unit from the given image using AI (OpenAI).
      *
      * @param file   the image file (ROI)
-     * @param prompt the prompt for the AI
      * @return measurement value and unit
      */
-    public MeasurementResponse extractMeasurement(MultipartFile file, String prompt) {
+    public MeasurementResponse extractMeasurement(MultipartFile file) {
         try {
             String base64Image = Base64.getEncoder().encodeToString(file.getBytes());
-            return extractMeasurement(base64Image, prompt);
+            return extractMeasurement(base64Image);
         } catch (IOException e) {
             log.error("Error extracting measurement from base64 image", e);
-            return new MeasurementResponse("error", "error");
+            return new MeasurementResponse(-999999, "error");
         }
     }
 
-    public MeasurementResponse extractMeasurement(String base64Image, String prompt) {
-        String result = openAiServiceWrapper.extractMeasurement(prompt, base64Image);
-        // Parse result, e.g. "23.5 Newton" or "12.3 Volt"
-        Pattern p = Pattern.compile("([\\d.,]+)\\s*([A-Za-z]+)");
-        Matcher m = p.matcher(result);
-        if (m.find()) {
-            return new MeasurementResponse(m.group(1), m.group(2));
-        } else {
-            return new MeasurementResponse("?", "?");
-        }
+    public MeasurementResponse extractMeasurement(String base64Image) {
+        return openAiServiceWrapper.extractMeasurement(PROMPT, base64Image);
     }
 }

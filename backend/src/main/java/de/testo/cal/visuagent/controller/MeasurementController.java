@@ -37,7 +37,7 @@ public class MeasurementController {
             @RequestParam(value = "prompt", required = false, defaultValue = "Extract the measurement value and unit from the image") String prompt
     ) {
         // Demo: returns a static response (replace with OpenAI logic)
-        MeasurementResponse response = measurementService.extractMeasurement(file, prompt);
+        MeasurementResponse response = measurementService.extractMeasurement(file);
         return ResponseEntity.ok(response);
     }
 
@@ -45,14 +45,12 @@ public class MeasurementController {
      * Extracts measurement from an image file located at the given path.
      *
      * @param filePath the path to the image file
-     * @param prompt the prompt for the AI (optional)
      * @return measurement value and unit
      * @throws IOException if an I/O error occurs
      */
     @GetMapping(value = "/by-path", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MeasurementResponse> extractMeasurementByPath(
-            @RequestParam("filePath") String filePath,
-            @RequestParam(value = "prompt", required = false, defaultValue = "Extract the measurement value and unit from the image") String prompt
+            @RequestParam("filePath") String filePath
     ) throws IOException {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(filePath)) {
             if (is == null) {
@@ -60,7 +58,7 @@ public class MeasurementController {
             }
 
             String base64Image = Base64.getEncoder().encodeToString(is.readAllBytes());
-            MeasurementResponse response = measurementService.extractMeasurement(base64Image, prompt);
+            MeasurementResponse response = measurementService.extractMeasurement(base64Image);
             return ResponseEntity.ok(response);
         }
     }
