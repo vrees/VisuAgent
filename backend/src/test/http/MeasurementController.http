@@ -1,0 +1,14 @@
+### Test für extractMeasurementByPath Endpoint
+GET http://localhost:8082/api/measurements/by-path?filePath=mock/0_0028.png&prompt=Extract%20the%20measurement%20value%20and%20unit%20from%20the%20image
+Accept: application/json
+
+> {%
+client.test("Status ist 200", function() {
+  client.assert(response.status === 200, "Status ist nicht 200!");
+});
+client.test("Antwort enthält value und unit", function() {
+  client.assert(response.body.value !== undefined, "value fehlt!");
+  client.assert(response.body.unit !== undefined, "unit fehlt!");
+});
+%}
+

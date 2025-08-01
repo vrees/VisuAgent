@@ -3,8 +3,10 @@ package de.testo.cal.visuagent.service;
 import com.theokanning.openai.service.OpenAiService;
 import com.theokanning.openai.completion.CompletionRequest;
 import com.theokanning.openai.completion.CompletionResult;
+import com.theokanning.openai.client.OpenAiApi;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -15,19 +17,27 @@ import org.springframework.stereotype.Service;
  */
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class OpenAiServiceWrapper {
 
     private OpenAiService openAiService;
 
-//    @Value("${openai.api.key}")
+    @Value("${openai.api.key}")
     String apiKey;
+
+    @Value("${openai.model}")
+    String model;
+
+    @Value("${openai.api.url}")
+    String apiUrl;
 
     @PostConstruct
     void init() {
-        apiKey = System.getenv("OPENAI_API_KEY");
-
         if (apiKey == null || apiKey.isBlank()) {
             throw new IllegalStateException("OPENAI_API_KEY environment variable is not set");
+        }
+        if (apiUrl == null || apiUrl.isBlank()) {
+            throw new IllegalStateException("OPENAI_API_URL environment variable is not set");
         }
         this.openAiService = new OpenAiService(apiKey);
     }
@@ -43,10 +53,17 @@ public class OpenAiServiceWrapper {
         // Demo: Only text completion, no real vision API call
         CompletionRequest request = CompletionRequest.builder()
                 .prompt(prompt + " (image omitted)")
-                .model("text-davinci-003")
+                .model(model)
                 .maxTokens(20)
                 .build();
-        CompletionResult result = openAiService.createCompletion(request);
-        return result.getChoices().get(0).getText();
+
+        try {
+            CompletionResult result = openAiService.createCompletion(request);
+            return result.getChoices().get(0).getText();
+        } catch (Exception e) {
+            log.error("Error while creating completion with OpenAI service", e);
+            throw e; // Optional: Weiterwerfen der Ausnahme, falls erforderlich
+        }
+
     }
 }
