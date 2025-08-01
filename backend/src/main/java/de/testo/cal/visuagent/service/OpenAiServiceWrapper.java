@@ -1,9 +1,13 @@
 package de.testo.cal.visuagent.service;
 
-import com.theokanning.openai.service.OpenAiService;
-import com.theokanning.openai.completion.CompletionRequest;
-import com.theokanning.openai.completion.CompletionResult;
-import com.theokanning.openai.client.OpenAiApi;
+
+import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+
+import com.openai.models.ChatModel;
+import com.openai.models.chat.completions.ChatCompletion;
+import com.openai.models.responses.Response;
+import com.openai.models.responses.ResponseCreateParams;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +24,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class OpenAiServiceWrapper {
 
-    private OpenAiService openAiService;
+    // Configures using the `OPENAI_API_KEY`, `OPENAI_ORG_ID` and `OPENAI_PROJECT_ID`
+    // environment variables
+    OpenAIClient client = OpenAIOkHttpClient.fromEnv();
 
     @Value("${openai.api.key}")
     String apiKey;
@@ -39,27 +45,24 @@ public class OpenAiServiceWrapper {
         if (apiUrl == null || apiUrl.isBlank()) {
             throw new IllegalStateException("OPENAI_API_URL environment variable is not set");
         }
-        this.openAiService = new OpenAiService(apiKey);
     }
 
-    /**
-     * Calls OpenAI API with the given prompt and image (Base64 encoded).
-     *
-     * @param prompt      the prompt
-     * @param base64Image the image as Base64 string
-     * @return result from OpenAI
-     */
+
     public String extractMeasurement(String prompt, String base64Image) {
-        // Demo: Only text completion, no real vision API call
-        CompletionRequest request = CompletionRequest.builder()
-                .prompt(prompt + " (image omitted)")
-                .model(model)
-                .maxTokens(20)
+
+
+        ResponseCreateParams params = ResponseCreateParams.builder()
+                .input(prompt)
+                .model(ChatModel.GPT_4_1)
                 .build();
 
+
         try {
-            CompletionResult result = openAiService.createCompletion(request);
-            return result.getChoices().get(0).getText();
+            Response response = client.responses().create(params);
+
+            log.info(response.toString());
+
+            return response.toString();
         } catch (Exception e) {
             log.error("Error while creating completion with OpenAI service", e);
             throw e; // Optional: Weiterwerfen der Ausnahme, falls erforderlich
