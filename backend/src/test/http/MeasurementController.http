@@ -1,14 +1,85 @@
 ### Test für extractMeasurementByPath Endpoint
-GET http://localhost:8082/api/measurements/by-path?filePath=mock/0_0028.png
+GET {{url}}=mock/0_0028.png
 Accept: application/json
 
 > {%
-client.test("Status ist 200", function() {
-  client.assert(response.status === 200, "Status ist nicht 200!");
-});
-client.test("Antwort enthält value und unit", function() {
-  client.assert(response.body.value !== undefined, "value fehlt!");
-  client.assert(response.body.unit !== undefined, "unit fehlt!");
-});
+    client.test("Status ist 200", function () {
+        client.assert(response.status === 200, "Status ist nicht 200!");
+    });
+    client.test("Antwort enthält korrekten value und unit", function () {
+        client.assert(response.body.value === 0.0028, "Der Wert ist nicht korrekt. Expected: 0.0028, Actual: " + response.body.value);
+        client.assert(response.body.unit !== undefined, "unit fehlt!");
+    });
 %}
 
+### 0.0
+GET {{url}}=mock/0_0.jpeg
+Accept: application/json
+
+> {%
+    client.test("Status ist 200", function () {
+        client.assert(response.status === 200, "Status ist nicht 200!");
+    });
+    client.test("Antwort enthält korrekten value und unit", function () {
+        client.assert(response.body.value === 0.0, "Der Wert ist nicht korrekt. Expected: 0.0, Actual: " + response.body.value);
+        client.assert(response.body.unit !== undefined, "unit fehlt!");
+    });
+%}
+
+### 0.1687
+GET {{url}}=mock/0_1687.jpeg
+Accept: application/json
+
+> {%
+    client.test("Status ist 200", function () {
+        client.assert(response.status === 200, "Status ist nicht 200!");
+    });
+    client.test("Antwort enthält korrekten value und unit", function () {
+        client.assert(response.body.value === 0.1687, "Der Wert ist nicht korrekt. Expected: 0.1687, Actual: " + response.body.value);
+        client.assert(response.body.unit !== undefined, "unit fehlt!");
+    });
+%}
+
+
+
+### -0.006
+GET {{url}}=mock/m0_006.jpeg
+Accept: application/json
+
+> {%
+    client.test("Status ist 200", function () {
+        client.assert(response.status === 200, "Status ist nicht 200!");
+    });
+    client.test("Antwort enthält korrekten value und unit", function () {
+        client.assert(response.body.value === -0.006, "Der Wert ist nicht korrekt. Expected: -0.006, Actual: " + response.body.value);
+        client.assert(response.body.unit !== undefined, "unit fehlt!");
+    });
+%}
+
+### -0.01284
+GET {{url}}=mock/m0_01284.jpeg
+Accept: application/json
+
+> {%
+    client.test("Status ist 200", function () {
+        client.assert(response.status === 200, "Status ist nicht 200!");
+    });
+    client.test("Antwort enthält korrekten value und unit", function () {
+        client.assert(response.body.value === -0.01284, "Der Wert ist nicht korrekt. Expected: -0.01284, Actual: " + response.body.value);
+        client.assert(response.body.unit !== undefined, "unit fehlt!");
+    });
+%}
+
+### 2975
+GET {{url}}=mock/2975.png
+Accept: application/json
+
+> {%
+    client.test("Status ist 200", function () {
+        client.assert(response.status === 200, "Status ist nicht 200!");
+    });
+    client.test("Antwort enthält korrekten value und unit", function () {
+        client.assert(response.body.value === 2975.0, "Der Wert ist nicht korrekt. Expected: 2975.0, Actual: " + response.body.value);
+        client.assert(response.body.unit !== undefined, "unit fehlt!");
+    });
+%}
