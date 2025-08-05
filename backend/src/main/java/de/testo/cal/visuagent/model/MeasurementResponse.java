@@ -11,6 +11,10 @@ public class MeasurementResponse {
 
     public String unit;
 
+    public MeasurementResponse() {
+        // Default constructor for Jackson
+    }
+
     public MeasurementResponse(float value, String unit) {
         this.value = value;
         this.unit = unit;
