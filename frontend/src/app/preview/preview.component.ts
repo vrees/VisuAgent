@@ -33,7 +33,65 @@ import { refreshPreview } from '../store/measurement.actions';
       </div>
     </mat-card>
   `,
-    styles: [':host { display: block; }'],
+    styles: [`
+      :host { 
+        display: block; 
+      }
+      
+      .result-section {
+        background: rgba(0, 0, 0, 0.8);
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 15px;
+        border: 2px solid #333;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(10px);
+      }
+      
+      .result-title {
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0 0 15px 0;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-align: center;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      }
+      
+      .result-value {
+        color: #000000;
+        background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+        font-size: 32px;
+        font-weight: bold;
+        font-family: 'Courier New', monospace;
+        padding: 15px 25px;
+        border-radius: 8px;
+        border: 3px solid #333;
+        text-align: center;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        letter-spacing: 2px;
+      }
+      
+      .no-result {
+        color: rgba(255, 255, 255, 0.7);
+        font-style: italic;
+        font-size: 16px;
+        text-align: center;
+        padding: 20px;
+      }
+      
+      .no-roi {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 18px;
+        text-align: center;
+        font-weight: 500;
+      }
+    `],
     standalone: false
 })
 export class PreviewComponent implements OnDestroy {
