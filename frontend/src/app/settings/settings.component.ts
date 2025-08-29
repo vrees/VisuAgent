@@ -15,7 +15,7 @@ import { AppState } from '../store';
         <mat-label>Bemerkung</mat-label>
         <textarea matInput maxlength="1000"></textarea>
       </mat-form-field>
-      <div *ngIf="roi$ | async as roi">
+      <div *ngIf="roi$ | async as roi" class="roi-fields">
         <mat-form-field appearance="fill">
           <mat-label>X</mat-label>
           <input matInput [value]="roi?.x" readonly>
@@ -36,7 +36,38 @@ import { AppState } from '../store';
       <button mat-raised-button color="primary" id="triggerAI" (click)="triggerAI.emit()">Wert erkennen</button>
     </mat-card>
   `,
-    styles: [':host { display: block; }'],
+    styles: [`
+      :host { 
+        display: block; 
+      }
+      mat-card {
+        font-size: 16px;
+      }
+      mat-card h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+      mat-form-field {
+        width: 100%;
+        margin-bottom: 16px;
+        font-size: 16px;
+      }
+      mat-form-field mat-label {
+        font-size: 16px;
+      }
+      button {
+        font-size: 16px;
+        padding: 12px 24px;
+        margin-top: 16px;
+        width: 100%;
+      }
+      .roi-fields {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin: 20px 0;
+      }
+    `],
     standalone: false
 })
 export class SettingsComponent {

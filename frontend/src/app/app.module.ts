@@ -6,7 +6,9 @@ import { AppComponent } from './app.component';
 import { VideoViewerComponent } from './video-viewer/video-viewer.component';
 import { SettingsComponent } from './settings/settings.component';
 import { PreviewComponent } from './preview/preview.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
 import { reducers } from './store';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,7 +23,8 @@ import { HttpClientModule } from '@angular/common/http';
     AppComponent,
     VideoViewerComponent,
     SettingsComponent,
-    PreviewComponent
+    PreviewComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -30,6 +33,7 @@ import { HttpClientModule } from '@angular/common/http';
     CommonModule,
     HttpClientModule,
     StoreModule.forRoot(reducers),
+    EffectsModule.forRoot([]),
     MatToolbarModule,
     MatButtonModule,
     MatInputModule,

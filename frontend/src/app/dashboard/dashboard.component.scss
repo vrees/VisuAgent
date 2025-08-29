@@ -1,0 +1,202 @@
+.dashboard-container {
+  padding: 12px;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+
+.dashboard-container h1 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 40px;
+  font-weight: 300;
+  font-size: 2.5em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 6px;
+  grid-template-areas: 
+    "video settings"
+    "preview settings";
+}
+
+.dashboard-section {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18);
+  }
+
+  &.video {
+    grid-area: video;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+
+    ::ng-deep mat-card {
+      background: transparent;
+      box-shadow: none;
+      color: inherit;
+    }
+
+    ::ng-deep mat-card h2 {
+      color: white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  &.settings {
+    grid-area: settings;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+
+    ::ng-deep mat-card {
+      background: transparent;
+      box-shadow: none;
+      color: inherit;
+    }
+
+    ::ng-deep mat-card h2 {
+      color: white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    ::ng-deep mat-form-field {
+      .mat-mdc-form-field-flex {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+      }
+
+      .mat-mdc-text-field-wrapper {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+        backdrop-filter: blur(10px);
+      }
+    }
+
+    ::ng-deep button {
+      background: rgba(255, 255, 255, 0.2) !important;
+      color: white !important;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.3) !important;
+      }
+    }
+  }
+
+  &.preview {
+    grid-area: preview;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+
+    ::ng-deep mat-card {
+      background: transparent;
+      box-shadow: none;
+      color: inherit;
+    }
+
+    ::ng-deep mat-card h2 {
+      color: white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+  }
+}
+
+// Zusätzliche Styling-Verbesserungen
+.dashboard-section {
+  // Innenabstand für bessere Darstellung
+  ::ng-deep mat-card {
+    padding: 24px !important;
+    margin: 0;
+  }
+
+  // Sanftere Übergänge für Eingabefelder
+  ::ng-deep mat-form-field {
+    margin-bottom: 20px !important;
+
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none; // Entfernt den zusätzlichen Platz unter Eingabefeldern
+    }
+  }
+
+  // Verbesserte Darstellung für readonly Felder
+  ::ng-deep input[readonly] {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+}
+
+// Trennlinien zwischen Komponenten
+.dashboard-grid::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 67%; // Position zwischen video und settings
+  width: 2px;
+  height: 60%;
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.dashboard-grid {
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    grid-template-areas: 
+      "video"
+      "preview"
+      "settings";
+  }
+
+  .dashboard-container {
+    padding: 20px;
+  }
+
+  .dashboard-container h1 {
+    font-size: 2em;
+    margin-bottom: 30px;
+  }
+
+  .dashboard-section {
+    &:hover {
+      transform: none; // Deaktiviert Hover-Effekt auf Mobile
+    }
+  }
+
+  // Entfernt Trennlinie auf Mobile
+  .dashboard-grid::before {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-container {
+    padding: 16px;
+  }
+
+  .dashboard-grid {
+    gap: 20px;
+  }
+
+  .dashboard-container h1 {
+    font-size: 1.8em;
+  }
+}

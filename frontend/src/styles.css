@@ -1,6 +1,19 @@
 /* Global Styles for VisuAgent */
-body {
+* {
+  box-sizing: border-box;
+}
+
+html, body {
   margin: 0;
+  padding: 0;
+  height: 100%;
   font-family: Roboto, Arial, sans-serif;
-  background: #fafafa;
+  background: #f5f7fa;
+  overflow-x: hidden;
+}
+
+app-root {
+  display: block;
+  height: 100vh;
+  width: 100%;
 }
