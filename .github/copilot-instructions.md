@@ -8,7 +8,7 @@ Dieses Dokument enthält Anweisungen und Konventionen für die Nutzung von GitHu
 - **Projektname:** visuagent
 - **Repository:** visuagent
 - **Backend:** Spring Boot (Java)
-- **Frontend:** Angular
+- **Frontend:** React
 
 ## Namenskonventionen
 - Java-Klassen und -Pakete: `de.testo.cal.visuagent...`

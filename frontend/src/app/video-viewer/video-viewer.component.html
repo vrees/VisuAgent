@@ -1,10 +1,13 @@
 <mat-card>
-  <h2>Video Stream</h2>
+  <h2>Live Camera Stream</h2>
   <div style="position: relative;">
-    <video #video width="100%" controls (loadedmetadata)="onVideoLoaded(video)" (click)="onVideoClick($event, video)">
-      <source src="/api/stream" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
+    <img #video 
+         [src]="streamUrl" 
+         style="width: 100%; height: auto; border: 1px solid #ccc;"
+         (load)="onImageLoaded($event)" 
+         (error)="onImageError($event)"
+         (click)="onVideoClick($event, $event.target)"
+         alt="Camera Stream">
     <canvas #canvas style="position: absolute; top: 0; left: 0; pointer-events: none;"></canvas>
   </div>
 </mat-card>

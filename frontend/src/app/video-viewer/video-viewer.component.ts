@@ -1,9 +1,8 @@
-import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { setRoi } from '../store/measurement.actions';
+import { setRoi, setMeasurement, refreshPreview } from '../store/measurement.actions';
 import { AppState } from '../store';
 import { MeasurementService } from '../services/measurement.service';
-import { setMeasurement } from '../store/measurement.actions';
 
 @Component({
     selector: 'app-video-viewer',
@@ -11,8 +10,8 @@ import { setMeasurement } from '../store/measurement.actions';
     styleUrls: ['./video-viewer.component.css'],
     standalone: false
 })
-export class VideoViewerComponent implements AfterViewInit {
-  @ViewChild('video') videoRef!: ElementRef<HTMLVideoElement>;
+export class VideoViewerComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('video') videoRef!: ElementRef<HTMLImageElement>;
   @ViewChild('canvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
   private isSelecting = false;
@@ -20,6 +19,8 @@ export class VideoViewerComponent implements AfterViewInit {
   private startY = 0;
   private roi: { x: number, y: number, width: number, height: number } | null = null;
   roi$;
+  streamUrl = '/api/stream';
+  private refreshTimer: any;
 
   constructor(private store: Store<AppState>, private measurementService: MeasurementService) {
     this.roi$ = this.store.pipe(select(state => state.measurement.roi));
@@ -29,14 +30,18 @@ export class VideoViewerComponent implements AfterViewInit {
    */
   triggerAI() {
     if (!this.roi) return;
-    const video = this.videoRef.nativeElement;
+    
+    // Preview aktualisieren bevor API-Call
+    this.store.dispatch(refreshPreview());
+    
+    const img = this.videoRef.nativeElement;
     const canvas = document.createElement('canvas');
     canvas.width = this.roi.width;
     canvas.height = this.roi.height;
     const ctx = canvas.getContext('2d');
     if (ctx) {
       ctx.drawImage(
-        video,
+        img,
         this.roi.x, this.roi.y, this.roi.width, this.roi.height,
         0, 0, this.roi.width, this.roi.height
       );
@@ -52,29 +57,43 @@ export class VideoViewerComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
+    // Canvas will be sized when image loads
     const canvas = this.canvasRef.nativeElement;
-    canvas.width = this.videoRef.nativeElement.videoWidth;
-    canvas.height = this.videoRef.nativeElement.videoHeight;
-    canvas.style.width = this.videoRef.nativeElement.offsetWidth + 'px';
-    canvas.style.height = this.videoRef.nativeElement.offsetHeight + 'px';
     canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
     canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
     canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
     canvas.style.pointerEvents = 'auto';
+    
+    // Start auto-refresh for live streaming (2 FPS)
+    this.startAutoRefresh();
+  }
+  
+  ngOnDestroy() {
+    if (this.refreshTimer) {
+      clearInterval(this.refreshTimer);
+    }
+  }
+  
+  private startAutoRefresh() {
+    this.refreshTimer = setInterval(() => {
+      // Add timestamp to force reload
+      this.streamUrl = '/api/stream?t=' + Date.now();
+    }, 1000); // 1 FPS
   }
 
-  onVideoLoaded(video: HTMLVideoElement) {
+  onImageLoaded(event: Event) {
+    const img = event.target as HTMLImageElement;
     const canvas = this.canvasRef.nativeElement;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.style.width = video.offsetWidth + 'px';
-    canvas.style.height = video.offsetHeight + 'px';
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    canvas.style.width = img.offsetWidth + 'px';
+    canvas.style.height = img.offsetHeight + 'px';
   }
 
-  onVideoClick(event: MouseEvent, video: HTMLVideoElement) {
+  onVideoClick(event: MouseEvent, img: HTMLImageElement) {
     // Forward click to canvas for ROI selection
     const canvas = this.canvasRef.nativeElement;
-    const rect = video.getBoundingClientRect();
+    const rect = img.getBoundingClientRect();
     const evt = new MouseEvent('mousedown', {
       clientX: event.clientX,
       clientY: event.clientY
@@ -125,5 +144,13 @@ export class VideoViewerComponent implements AfterViewInit {
       ctx.lineWidth = 2;
       ctx.strokeRect(roi.x, roi.y, roi.width, roi.height);
     }
+  }
+  
+  onImageError(event: Event) {
+    console.error('Image loading failed:', event);
+    // Retry after a short delay
+    setTimeout(() => {
+      this.streamUrl = '/api/stream?t=' + Date.now();
+    }, 1000);
   }
 }
