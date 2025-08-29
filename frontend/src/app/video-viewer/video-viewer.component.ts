@@ -103,19 +103,32 @@ export class VideoViewerComponent implements AfterViewInit, OnDestroy {
 
   onMouseDown(event: MouseEvent) {
     this.isSelecting = true;
-    const rect = this.canvasRef.nativeElement.getBoundingClientRect();
-    this.startX = event.clientX - rect.left;
-    this.startY = event.clientY - rect.top;
+    const canvas = this.canvasRef.nativeElement;
+    const rect = canvas.getBoundingClientRect();
+    
+    // Berechne die Skalierung zwischen angezeigter Größe und tatsächlicher Canvas-Größe
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    this.startX = (event.clientX - rect.left) * scaleX;
+    this.startY = (event.clientY - rect.top) * scaleY;
   }
 
   onMouseMove(event: MouseEvent) {
     if (!this.isSelecting) return;
-    const rect = this.canvasRef.nativeElement.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    const ctx = this.canvasRef.nativeElement.getContext('2d');
+    const canvas = this.canvasRef.nativeElement;
+    const rect = canvas.getBoundingClientRect();
+    
+    // Berechne die Skalierung zwischen angezeigter Größe und tatsächlicher Canvas-Größe
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    const x = (event.clientX - rect.left) * scaleX;
+    const y = (event.clientY - rect.top) * scaleY;
+    
+    const ctx = canvas.getContext('2d');
     if (ctx) {
-      ctx.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.strokeStyle = 'red';
       ctx.lineWidth = 2;
       ctx.strokeRect(this.startX, this.startY, x - this.startX, y - this.startY);
@@ -125,9 +138,16 @@ export class VideoViewerComponent implements AfterViewInit, OnDestroy {
   onMouseUp(event: MouseEvent) {
     if (!this.isSelecting) return;
     this.isSelecting = false;
-    const rect = this.canvasRef.nativeElement.getBoundingClientRect();
-    const endX = event.clientX - rect.left;
-    const endY = event.clientY - rect.top;
+    const canvas = this.canvasRef.nativeElement;
+    const rect = canvas.getBoundingClientRect();
+    
+    // Berechne die Skalierung zwischen angezeigter Größe und tatsächlicher Canvas-Größe
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    const endX = (event.clientX - rect.left) * scaleX;
+    const endY = (event.clientY - rect.top) * scaleY;
+    
     const roi = {
       x: Math.min(this.startX, endX),
       y: Math.min(this.startY, endY),
@@ -136,10 +156,11 @@ export class VideoViewerComponent implements AfterViewInit, OnDestroy {
     };
     this.roi = roi;
     this.store.dispatch(setRoi({ roi }));
+    
     // Zeichnung beibehalten
-    const ctx = this.canvasRef.nativeElement.getContext('2d');
+    const ctx = canvas.getContext('2d');
     if (ctx) {
-      ctx.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.strokeStyle = 'red';
       ctx.lineWidth = 2;
       ctx.strokeRect(roi.x, roi.y, roi.width, roi.height);
