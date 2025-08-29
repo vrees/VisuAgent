@@ -16,5 +16,6 @@ const initialState: MeasurementState = {
 export const measurementReducer = createReducer(
   initialState,
   on(MeasurementActions.setRoi, (state, { roi }) => ({ ...state, roi })),
-  on(MeasurementActions.setMeasurement, (state, { value, unit }) => ({ ...state, value, unit }))
+  on(MeasurementActions.setMeasurement, (state, { value, unit }) => ({ ...state, value, unit })),
+  on(MeasurementActions.clearMeasurement, (state) => ({ ...state, value: null, unit: null }))
 );

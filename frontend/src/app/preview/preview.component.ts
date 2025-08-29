@@ -14,16 +14,17 @@ import { refreshPreview } from '../store/measurement.actions';
         <div *ngIf="roiImageUrl; else noRoi" style="text-align: center; width: 100%;">
           <img [src]="roiImageUrl" style="max-width: 100%; max-height: 120px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);" alt="Selected ROI">
           
-          <div class="result-section" *ngIf="value$ | async as value; else noResult">
+          <div class="result-section">
             <h3 class="result-title">Erkannter Wert</h3>
-            <div class="result-value">{{ value }}</div>
-          </div>
-          
-          <ng-template #noResult>
-            <div class="no-result">
-              <span>Klicken Sie "Wert erkennen" für die Analyse</span>
+            <div class="result-value">
+              <ng-container *ngIf="value$ | async as value; else processingOrNoResult">
+                {{ value }}
+              </ng-container>
+              <ng-template #processingOrNoResult>
+                ?
+              </ng-template>
             </div>
-          </ng-template>
+          </div>
         </div>
         <ng-template #noRoi>
           <div class="no-roi">
@@ -75,14 +76,6 @@ import { refreshPreview } from '../store/measurement.actions';
         align-items: center;
         justify-content: center;
         letter-spacing: 2px;
-      }
-      
-      .no-result {
-        color: rgba(255, 255, 255, 0.7);
-        font-style: italic;
-        font-size: 16px;
-        text-align: center;
-        padding: 20px;
       }
       
       .no-roi {

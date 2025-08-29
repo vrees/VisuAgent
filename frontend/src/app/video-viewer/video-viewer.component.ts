@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { setRoi, setMeasurement, refreshPreview } from '../store/measurement.actions';
+import { setRoi, setMeasurement, refreshPreview, clearMeasurement } from '../store/measurement.actions';
 import { AppState } from '../store';
 import { MeasurementService } from '../services/measurement.service';
 
@@ -31,29 +31,50 @@ export class VideoViewerComponent implements AfterViewInit, OnDestroy {
   triggerAI() {
     if (!this.roi) return;
     
-    // Preview aktualisieren bevor API-Call
-    this.store.dispatch(refreshPreview());
+    // Schritt 1: Ergebniswert löschen
+    this.store.dispatch(clearMeasurement());
     
-    const img = this.videoRef.nativeElement;
-    const canvas = document.createElement('canvas');
-    canvas.width = this.roi.width;
-    canvas.height = this.roi.height;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.drawImage(
-        img,
-        this.roi.x, this.roi.y, this.roi.width, this.roi.height,
-        0, 0, this.roi.width, this.roi.height
-      );
-      canvas.toBlob(blob => {
-        if (blob) {
-          const file = new File([blob], 'roi.jpg', { type: 'image/jpeg' });
-          this.measurementService.extractMeasurement(file).subscribe(result => {
-            this.store.dispatch(setMeasurement({ value: result.value, unit: result.unit }));
-          });
-        }
-      }, 'image/jpeg');
-    }
+    // Schritt 2: Aktuelles Stream-Bild laden und verarbeiten
+    const currentStreamImage = new Image();
+    currentStreamImage.crossOrigin = 'anonymous';
+    
+    currentStreamImage.onload = () => {
+      // Schritt 3: ROI aus dem aktuellen Stream-Bild extrahieren
+      const canvas = document.createElement('canvas');
+      canvas.width = this.roi!.width;
+      canvas.height = this.roi!.height;
+      const ctx = canvas.getContext('2d');
+      
+      if (ctx) {
+        // ROI extrahieren
+        ctx.drawImage(
+          currentStreamImage,
+          this.roi!.x, this.roi!.y, this.roi!.width, this.roi!.height,
+          0, 0, this.roi!.width, this.roi!.height
+        );
+        
+        // Schritt 4: Preview mit diesem Bild aktualisieren
+        this.store.dispatch(refreshPreview());
+        
+        // Schritt 5: API-Call mit dem gleichen Bild
+        canvas.toBlob(blob => {
+          if (blob) {
+            const file = new File([blob], 'roi.jpg', { type: 'image/jpeg' });
+            this.measurementService.extractMeasurement(file).subscribe(result => {
+              // Schritt 6: Ergebnis anzeigen
+              this.store.dispatch(setMeasurement({ value: result.value, unit: result.unit }));
+            });
+          }
+        }, 'image/jpeg');
+      }
+    };
+    
+    currentStreamImage.onerror = () => {
+      console.error('Failed to load current stream image for AI processing');
+    };
+    
+    // Aktuelles Stream-Bild laden
+    currentStreamImage.src = `/api/stream?t=${Date.now()}`;
   }
 
   ngAfterViewInit() {
