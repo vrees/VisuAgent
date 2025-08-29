@@ -95,7 +95,7 @@ export class SettingsComponent {
     @Output() triggerAI = new EventEmitter<void>();
     roi$;
 
-    constructor(readonly private store: Store<AppState>) {
+    constructor(private readonly store: Store<AppState>) {
         this.roi$ = this.store.pipe(select(state => state.measurement.roi));
     }
 }
