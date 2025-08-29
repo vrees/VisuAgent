@@ -110,8 +110,8 @@ export class VideoViewerComponent implements AfterViewInit, OnDestroy {
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
     
-    this.startX = (event.clientX - rect.left) * scaleX;
-    this.startY = (event.clientY - rect.top) * scaleY;
+    this.startX = Math.round((event.clientX - rect.left) * scaleX);
+    this.startY = Math.round((event.clientY - rect.top) * scaleY);
   }
 
   onMouseMove(event: MouseEvent) {
@@ -123,8 +123,8 @@ export class VideoViewerComponent implements AfterViewInit, OnDestroy {
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
     
-    const x = (event.clientX - rect.left) * scaleX;
-    const y = (event.clientY - rect.top) * scaleY;
+    const x = Math.round((event.clientX - rect.left) * scaleX);
+    const y = Math.round((event.clientY - rect.top) * scaleY);
     
     const ctx = canvas.getContext('2d');
     if (ctx) {
@@ -145,8 +145,8 @@ export class VideoViewerComponent implements AfterViewInit, OnDestroy {
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
     
-    const endX = (event.clientX - rect.left) * scaleX;
-    const endY = (event.clientY - rect.top) * scaleY;
+    const endX = Math.round((event.clientX - rect.left) * scaleX);
+    const endY = Math.round((event.clientY - rect.top) * scaleY);
     
     const roi = {
       x: Math.min(this.startX, endX),
