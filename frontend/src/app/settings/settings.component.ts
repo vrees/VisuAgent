@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Output} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import {AppState} from '../store';
+import {CalibrationService} from '../services/calibration.service';
 
 @Component({
     selector: 'app-settings',
@@ -8,8 +9,12 @@ import {AppState} from '../store';
         <mat-card>
             <h2>Settings</h2>
             <mat-form-field appearance="fill">
-                <mat-label>Prüfmittel</mat-label>
-                <input matInput maxlength="50">
+                <mat-label>Auftragsnummer</mat-label>
+                <input matInput maxlength="20" [(ngModel)]="orderNumber" pattern="[a-zA-Z0-9]*" title="Nur Zahlen und Buchstaben">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Equipmentnummer</mat-label>
+                <input matInput maxlength="20" [(ngModel)]="equipmentNumber" pattern="[a-zA-Z0-9]*" title="Nur Zahlen und Buchstaben">
             </mat-form-field>
             <mat-form-field appearance="fill">
                 <mat-label>Bemerkung</mat-label>
@@ -33,6 +38,7 @@ import {AppState} from '../store';
                     <input matInput [value]="roi?.height" readonly>
                 </mat-form-field>
             </div>
+            <button mat-raised-button color="accent" id="createProjekt" (click)="createProject()">Projekt anlegen</button>
             <button mat-raised-button color="primary" id="triggerAI" (click)="triggerAI.emit()">Wert erkennen</button>
         </mat-card>
     `,
@@ -80,6 +86,7 @@ import {AppState} from '../store';
             padding: 12px 24px;
             margin-top: 16px;
             width: 100%;
+            margin-bottom: 8px;
         }
 
         .roi-fields {
@@ -94,8 +101,36 @@ import {AppState} from '../store';
 export class SettingsComponent {
     @Output() triggerAI = new EventEmitter<void>();
     roi$;
+    orderNumber = '';
+    equipmentNumber = '';
 
-    constructor(private readonly store: Store<AppState>) {
+    constructor(
+        private readonly store: Store<AppState>,
+        private readonly calibrationService: CalibrationService
+    ) {
         this.roi$ = this.store.pipe(select(state => state.measurement.roi));
+    }
+
+    createProject() {
+        if (!this.orderNumber || !this.equipmentNumber) {
+            alert('Bitte füllen Sie beide Felder aus');
+            return;
+        }
+
+        this.calibrationService.createCalibration({
+            id: {
+                orderNumber: this.orderNumber,
+                equipmentNumber: this.equipmentNumber
+            }
+        }).subscribe({
+            next: (calibration) => {
+                alert('Projekt erfolgreich angelegt');
+                console.log('Calibration created:', calibration);
+            },
+            error: (error) => {
+                alert('Fehler beim Anlegen des Projekts');
+                console.error('Error creating calibration:', error);
+            }
+        });
     }
 }

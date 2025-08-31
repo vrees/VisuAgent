@@ -1,5 +1,5 @@
 ### Test für extractMeasurementByPath Endpoint
-GET {{url}}=mock/0_0028.png
+GET {{measurements-url}}=mock/0_0028.png
 Accept: application/json
 
 > {%
@@ -13,7 +13,7 @@ Accept: application/json
 %}
 
 ### 0.0
-GET {{url}}=mock/0_0.jpeg
+GET {{measurements-url}}=mock/0_0.jpeg
 Accept: application/json
 
 > {%
@@ -27,7 +27,7 @@ Accept: application/json
 %}
 
 ### 0.1687
-GET {{url}}=mock/0_1687.jpeg
+GET {{measurements-url}}=mock/0_1687.jpeg
 Accept: application/json
 
 > {%
@@ -43,7 +43,7 @@ Accept: application/json
 
 
 ### -0.006
-GET {{url}}=mock/m0_006.jpeg
+GET {{measurements-url}}=mock/m0_006.jpeg
 Accept: application/json
 
 > {%
@@ -57,7 +57,7 @@ Accept: application/json
 %}
 
 ### -0.01284
-GET {{url}}=mock/m0_01284.jpeg
+GET {{measurements-url}}=mock/m0_01284.jpeg
 Accept: application/json
 
 > {%
@@ -71,7 +71,7 @@ Accept: application/json
 %}
 
 ### 2975
-GET {{url}}=mock/2975.png
+GET {{measurements-url}}=mock/2975.png
 Accept: application/json
 
 > {%

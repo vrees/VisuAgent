@@ -1,0 +1,96 @@
+### Neue Kalibrierung erstellen
+POST http://localhost:8082/api/calibration
+Content-Type: application/json
+
+{
+  "id": {
+    "orderNumber": "hugo1382",
+    "equipmentNumber": "eq666555"
+  },
+  "remark": "Das ist ein interessanter Kunde",
+  "imageArea": {
+    "x": 100,
+    "y": 200,
+    "width": 300,
+    "height": 400
+  }
+}
+
+> {%
+    client.test("Status ist 201", function () {
+        client.assert(response.status === 201, "Status ist nicht 201!");
+    });
+%}
+
+###
+
+### Alle Kalibrierungen abrufen
+GET http://localhost:8082/api/calibration
+Accept: application/json
+
+> {%
+    client.test("Status ist 200", function () {
+        client.assert(response.status === 200, "Status ist nicht 200!");
+    });
+%}
+
+###
+
+### Kalibrierung nach ID abrufen
+GET http://localhost:8082/api/calibration/hugo1382/eq666555
+Accept: application/json
+
+> {%
+    client.test("Status ist 200", function () {
+        client.assert(response.status === 200, "Status ist nicht 200!");
+    });
+%}
+
+###
+
+### Kalibrierung aktualisieren
+PUT http://localhost:8082/api/calibration/hugo1382/eq666555
+Content-Type: application/json
+
+{
+  "id": {
+    "orderNumber": "hugo1382",
+    "equipmentNumber": "eq666555"
+  },
+  "remark": "Aktualisierte Bemerkung",
+  "imageArea": {
+    "x": 150,
+    "y": 250,
+    "width": 350,
+    "height": 450
+  }
+}
+
+> {%
+    client.test("Status ist 200", function () {
+        client.assert(response.status === 200, "Status ist nicht 200!");
+    });
+%}
+
+###
+
+### Prüfen ob Kalibrierung existiert
+GET http://localhost:8082/api/calibration/exists/hugo1382/eq666555
+Accept: application/json
+
+> {%
+    client.test("Status ist 200", function () {
+        client.assert(response.status === 200, "Status ist nicht 200!");
+    });
+%}
+
+###
+
+### Kalibrierung löschen
+DELETE http://localhost:8082/api/calibration/hugo1382/eq666555
+
+> {%
+    client.test("Status ist 204", function () {
+        client.assert(response.status === 204, "Status ist nicht 204!");
+    });
+%}
