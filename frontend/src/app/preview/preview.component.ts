@@ -24,6 +24,12 @@ import { refreshPreview } from '../store/measurement.actions';
                 ?
               </ng-template>
             </div>
+            <div class="confidence-section" *ngIf="confidence$ | async as confidence">
+              <span class="confidence-label">Konfidenz:</span>
+              <span class="confidence-value" [ngClass]="getConfidenceClass(confidence)">
+                {{ (confidence * 100) | number:'1.0-0' }}%
+              </span>
+            </div>
           </div>
         </div>
         <ng-template #noRoi>
@@ -84,6 +90,45 @@ import { refreshPreview } from '../store/measurement.actions';
         text-align: center;
         font-weight: 500;
       }
+      
+      .confidence-section {
+        margin-top: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      
+      .confidence-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 14px;
+        font-weight: 500;
+      }
+      
+      .confidence-value {
+        font-size: 16px;
+        font-weight: bold;
+        padding: 4px 8px;
+        border-radius: 4px;
+      }
+      
+      .confidence-high {
+        color: #4caf50;
+        background: rgba(76, 175, 80, 0.2);
+      }
+      
+      .confidence-medium {
+        color: #ff9800;
+        background: rgba(255, 152, 0, 0.2);
+      }
+      
+      .confidence-low {
+        color: #f44336;
+        background: rgba(244, 67, 54, 0.2);
+      }
     `],
     standalone: false
 })
@@ -91,14 +136,14 @@ export class PreviewComponent implements OnDestroy {
   @ViewChild('hiddenCanvas') hiddenCanvasRef!: ElementRef<HTMLCanvasElement>;
   
   value$;
-  unit$;
+  confidence$;
   roi$;
   roiImageUrl: string | null = null;
   private subscription = new Subscription();
 
   constructor(private store: Store<AppState>, private actions$: Actions) {
     this.value$ = this.store.pipe(select(state => state.measurement.value));
-    this.unit$ = this.store.pipe(select(state => state.measurement.unit));
+    this.confidence$ = this.store.pipe(select(state => state.measurement.confidence));
     this.roi$ = this.store.pipe(select(state => state.measurement.roi));
     
     // ROI-Änderungen überwachen und Preview aktualisieren
@@ -170,5 +215,11 @@ export class PreviewComponent implements OnDestroy {
     
     // Aktuelles Stream-Bild laden
     img.src = `/api/stream?t=${Date.now()}`;
+  }
+
+  getConfidenceClass(confidence: number): string {
+    if (confidence >= 0.8) return 'confidence-high';
+    if (confidence >= 0.5) return 'confidence-medium';
+    return 'confidence-low';
   }
 }

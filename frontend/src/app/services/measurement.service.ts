@@ -7,10 +7,10 @@ import { Observable } from 'rxjs';
 export class MeasurementService {
   constructor(private http: HttpClient) {}
 
-  extractMeasurement(file: File, prompt: string = 'Extract the measurement value and unit from the image'): Observable<{ value: string, unit: string }> {
+  extractMeasurement(file: File, prompt: string = 'Extract the measurement value from the image'): Observable<{ value: number, confidence: number }> {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('prompt', prompt);
-    return this.http.post<{ value: string, unit: string }>(`${environment.apiUrl}/measurements`, formData);
+    return this.http.post<{ value: number, confidence: number }>(`${environment.apiUrl}/measurements`, formData);
   }
 }

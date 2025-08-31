@@ -62,7 +62,7 @@ export class VideoViewerComponent implements AfterViewInit, OnDestroy {
             const file = new File([blob], 'roi.jpg', { type: 'image/jpeg' });
             this.measurementService.extractMeasurement(file).subscribe(result => {
               // Schritt 6: Ergebnis anzeigen
-              this.store.dispatch(setMeasurement({ value: result.value, unit: result.unit }));
+              this.store.dispatch(setMeasurement({ value: result.value, confidence: result.confidence }));
             });
           }
         }, 'image/jpeg');

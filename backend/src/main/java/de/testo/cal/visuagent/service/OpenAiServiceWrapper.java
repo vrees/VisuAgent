@@ -72,7 +72,7 @@ public class OpenAiServiceWrapper {
 
             log.info("OpenAI Response: {}", responseText);
 
-            // Parse the response to extract value and unit using regex
+            // Parse the response to extract value and confidence from JSON
             return parseResponse(responseText);
 
         } catch (Exception e) {
@@ -118,35 +118,37 @@ public class OpenAiServiceWrapper {
     }
 
     private MeasurementResponse parseResponse(String responseText) {
-        // Try to extract number and unit from the response text
-        // Pattern to match numbers (including decimals) followed by units
-        Pattern pattern = Pattern.compile("([+-]?\\d*\\.?\\d+)\\s*([a-zA-Z]+|%|°[CF]|bar|psi)");
-        Matcher matcher = pattern.matcher(responseText);
-
-        if (matcher.find()) {
-            try {
-                float value = Float.parseFloat(matcher.group(1));
-                String unit = matcher.group(2).trim();
-                return new MeasurementResponse(value, unit);
-            } catch (NumberFormatException e) {
-                log.warn("Could not parse number from response: {}", matcher.group(1));
+        try {
+            // Try to parse as JSON first
+            JsonNode jsonNode = objectMapper.readTree(responseText);
+            
+            if (jsonNode.has("value") && jsonNode.has("confidence")) {
+                float value = (float) jsonNode.get("value").asDouble();
+                float confidence = (float) jsonNode.get("confidence").asDouble();
+                
+                // Ensure confidence is within valid range
+                confidence = Math.max(0.0f, Math.min(1.0f, confidence));
+                
+                return new MeasurementResponse(value, confidence);
             }
+        } catch (Exception e) {
+            log.debug("Could not parse response as JSON, trying regex fallback: {}", e.getMessage());
         }
 
-        // Fallback - try to extract just a number if no unit pattern found
+        // Fallback - try to extract just a number if JSON parsing failed
         Pattern numberPattern = Pattern.compile("([+-]?\\d*\\.?\\d+)");
         Matcher numberMatcher = numberPattern.matcher(responseText);
 
         if (numberMatcher.find()) {
             try {
                 float value = Float.parseFloat(numberMatcher.group(1));
-                return new MeasurementResponse(value, "unknown");
+                return new MeasurementResponse(value, 0.5f); // Medium confidence for fallback
             } catch (NumberFormatException e) {
                 log.warn("Could not parse number from response: {}", numberMatcher.group(1));
             }
         }
 
         log.warn("Could not extract measurement from response: {}", responseText);
-        return new MeasurementResponse(0.0f, "unknown");
+        return new MeasurementResponse(0.0f, 0.0f);
     }
 }

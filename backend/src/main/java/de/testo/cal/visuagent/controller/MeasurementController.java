@@ -25,11 +25,11 @@ public class MeasurementController {
     private final MeasurementService measurementService;
 
     /**
-     * Receives an image and ROI, sends it to the AI, and returns the measurement value and unit.
+     * Receives an image and ROI, sends it to the AI, and returns the measurement value and confidence.
      *
      * @param file   the image file (ROI)
      * @param prompt the prompt for the AI (optional)
-     * @return measurement value and unit
+     * @return measurement value and confidence
      */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MeasurementResponse> extractMeasurement(
@@ -45,7 +45,7 @@ public class MeasurementController {
      * Extracts measurement from an image file located at the given path.
      *
      * @param filePath the path to the image file
-     * @return measurement value and unit
+     * @return measurement value and confidence
      * @throws IOException if an I/O error occurs
      */
     @GetMapping(value = "/by-path", produces = MediaType.APPLICATION_JSON_VALUE)

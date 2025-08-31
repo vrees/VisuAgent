@@ -8,7 +8,7 @@ Accept: application/json
     });
     client.test("Antwort enthält korrekten value", function () {
         client.assert(response.body.value === 0.0028, "Der Wert ist nicht korrekt. Expected: 0.0028, Actual: " + response.body.value);
-        client.assert(response.body.unit !== undefined, "unit fehlt!");
+        client.assert(response.body.confidence !== undefined, "confidence fehlt!");
     });
 %}
 
@@ -22,7 +22,7 @@ Accept: application/json
     });
     client.test("Antwort enthält korrekten value", function () {
         client.assert(response.body.value === 0.0, "Der Wert ist nicht korrekt. Expected: 0.0, Actual: " + response.body.value);
-        client.assert(response.body.unit !== undefined, "unit fehlt!");
+        client.assert(response.body.confidence !== undefined, "confidence fehlt!");
     });
 %}
 
@@ -36,7 +36,7 @@ Accept: application/json
     });
     client.test("Antwort enthält korrekten value", function () {
         client.assert(response.body.value === 0.1687, "Der Wert ist nicht korrekt. Expected: 0.1687, Actual: " + response.body.value);
-        client.assert(response.body.unit !== undefined, "unit fehlt!");
+        client.assert(response.body.confidence !== undefined, "confidence fehlt!");
     });
 %}
 
@@ -52,7 +52,7 @@ Accept: application/json
     });
     client.test("Antwort enthält korrekten value", function () {
         client.assert(response.body.value === -0.006, "Der Wert ist nicht korrekt. Expected: -0.006, Actual: " + response.body.value);
-        client.assert(response.body.unit !== undefined, "unit fehlt!");
+        client.assert(response.body.confidence !== undefined, "confidence fehlt!");
     });
 %}
 
@@ -66,7 +66,7 @@ Accept: application/json
     });
     client.test("Antwort enthält korrekten value", function () {
         client.assert(response.body.value === -0.01284, "Der Wert ist nicht korrekt. Expected: -0.01284, Actual: " + response.body.value);
-        client.assert(response.body.unit !== undefined, "unit fehlt!");
+        client.assert(response.body.confidence !== undefined, "confidence fehlt!");
     });
 %}
 
@@ -80,6 +80,6 @@ Accept: application/json
     });
     client.test("Antwort enthält korrekten value", function () {
         client.assert(response.body.value === 2975.0, "Der Wert ist nicht korrekt. Expected: 2975.0, Actual: " + response.body.value);
-        client.assert(response.body.unit !== undefined, "unit fehlt!");
+        client.assert(response.body.confidence !== undefined, "confidence fehlt!");
     });
 %}

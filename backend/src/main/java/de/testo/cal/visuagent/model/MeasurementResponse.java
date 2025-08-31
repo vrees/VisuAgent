@@ -9,20 +9,20 @@ public class MeasurementResponse {
 
     public float value;
 
-    public String unit;
+    public float confidence;
 
     public MeasurementResponse() {
         // Default constructor for Jackson
     }
 
-    public MeasurementResponse(float value, String unit) {
+    public MeasurementResponse(float value, float confidence) {
         this.value = value;
-        this.unit = unit;
+        this.confidence = confidence;
     }
 
 
     @Override
     public String toString() {
-        return value + " " + unit;
+        return value + " (confidence: " + confidence + ")";
     }
 }

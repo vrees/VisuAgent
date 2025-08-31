@@ -12,7 +12,7 @@ class MeasurementServiceTest {
     void extractMeasurement_returnsStaticValue() {
         // OpenAiServiceWrapper mocken
         OpenAiServiceWrapper openAiServiceWrapper = org.mockito.Mockito.mock(OpenAiServiceWrapper.class);
-        MeasurementResponse mockResponse = new MeasurementResponse(23.5f, "Newton");
+        MeasurementResponse mockResponse = new MeasurementResponse(23.5f, 0.95f);
         org.mockito.Mockito.when(openAiServiceWrapper.extractMeasurement(org.mockito.Mockito.anyString(), org.mockito.Mockito.anyString()))
                 .thenReturn(mockResponse);
 
@@ -20,6 +20,6 @@ class MeasurementServiceTest {
         MockMultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpeg", new byte[]{1, 2, 3});
         MeasurementResponse response = service.extractMeasurement(file);
         assertEquals(23.5, response.value);
-        assertEquals("Newton", response.unit);
+        assertEquals(0.95f, response.confidence);
     }
 }

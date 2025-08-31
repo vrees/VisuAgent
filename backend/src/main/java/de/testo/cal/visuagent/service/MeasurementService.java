@@ -20,9 +20,14 @@ import java.util.regex.Pattern;
 public class MeasurementService {
 
     public static final String PROMPT = """
-            Extract the measurement value and unit from the image.
+            Extract the measurement value from the image.
             Return the result as JSON using following fields:
-            value (float) and unit (String)
+            value (float) and confidence (float between 0.0 and 1.0)
+            The confidence indicates how certain you are about the recognized value:
+            1.0 = completely certain, clear and unambiguous reading
+            0.8-0.9 = very confident, minor uncertainty
+            0.5-0.7 = moderate confidence, some ambiguity
+            0.0-0.4 = low confidence, unclear or hard to read
             """  ;
 
     private final OpenAiServiceWrapper openAiServiceWrapper;
@@ -32,10 +37,10 @@ public class MeasurementService {
     }
 
     /**
-     * Extracts measurement value and unit from the given image using AI (OpenAI).
+     * Extracts measurement value and confidence from the given image using AI (OpenAI).
      *
      * @param file   the image file (ROI)
-     * @return measurement value and unit
+     * @return measurement value and confidence
      */
     public MeasurementResponse extractMeasurement(MultipartFile file) {
         try {
@@ -43,7 +48,7 @@ public class MeasurementService {
             return extractMeasurement(base64Image);
         } catch (IOException e) {
             log.error("Error extracting measurement from base64 image", e);
-            return new MeasurementResponse(-999999, "error");
+            return new MeasurementResponse(-999999, 0.0f);
         }
     }
 
