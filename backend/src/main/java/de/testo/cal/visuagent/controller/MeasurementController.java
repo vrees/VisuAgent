@@ -27,14 +27,14 @@ public class MeasurementController {
     /**
      * Receives an image and ROI, sends it to the AI, and returns the measurement value and unit.
      *
-     * @param file the image file (ROI)
+     * @param file   the image file (ROI)
      * @param prompt the prompt for the AI (optional)
      * @return measurement value and unit
      */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MeasurementResponse> extractMeasurement(
             @RequestPart("file") MultipartFile file,
-            @RequestParam(value = "prompt", required = false, defaultValue = "Extract the measurement value and unit from the image") String prompt
+            @RequestParam(value = "prompt", required = false, defaultValue = "Extract the measurement value") String prompt
     ) {
         // Demo: returns a static response (replace with OpenAI logic)
         MeasurementResponse response = measurementService.extractMeasurement(file);
