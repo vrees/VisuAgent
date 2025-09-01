@@ -19,7 +19,6 @@ import java.util.Base64;
  */
 @RestController
 @RequestMapping("/api/measurements")
-@CrossOrigin(origins = "http://localhost:4200")
 @RequiredArgsConstructor
 public class MeasurementController {
 
@@ -34,8 +33,7 @@ public class MeasurementController {
      */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MeasurementResponse> extractMeasurement(
-            @RequestPart("file") MultipartFile file,
-            @RequestParam(value = "prompt", required = false, defaultValue = "Extract the measurement value") String prompt
+            @RequestPart("file") MultipartFile file
     ) {
         // Demo: returns a static response (replace with OpenAI logic)
         MeasurementResponse response = measurementService.extractMeasurement(file);

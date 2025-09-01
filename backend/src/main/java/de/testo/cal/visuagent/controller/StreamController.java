@@ -4,7 +4,6 @@ import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,13 +24,12 @@ import java.util.concurrent.TimeUnit;
  */
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:4200")
 @Slf4j
 public class StreamController {
 
     private volatile boolean cameraAvailable = false;
     private volatile boolean cameraInitialized = false;
-    private volatile BufferedImage lastCapturedFrame = null;
+    private BufferedImage lastCapturedFrame = null;
     private final ScheduledExecutorService cameraScheduler = Executors.newScheduledThreadPool(1);
     private Process cameraProcess = null;
 
@@ -99,7 +97,7 @@ public class StreamController {
             // Use ffmpeg to capture a single frame from camera with increased timeout
             ProcessBuilder pb = new ProcessBuilder(
                     "ffmpeg", "-f", "v4l2", "-i", "/dev/video0",
-                    "-vframes", "1", "-f", "image2", "-vcodec", "mjpeg", 
+                    "-vframes", "1", "-f", "image2", "-vcodec", "mjpeg",
                     "-timeout", "3000000", "-y", filename  // 3 second timeout for input
             );
             pb.redirectErrorStream(true);
@@ -139,13 +137,13 @@ public class StreamController {
                 cameraAvailable = false;
                 return;
             }
-            
+
             // Try to detect available cameras using v4l2-ctl
             ProcessBuilder pb = new ProcessBuilder("v4l2-ctl", "--list-devices");
             pb.redirectErrorStream(true);
             Process process = pb.start();
             boolean finished = process.waitFor(2, TimeUnit.SECONDS);
-            
+
             if (finished && process.exitValue() == 0) {
                 cameraAvailable = true;
                 log.info("USB camera detected: JOYACCESS camera found at /dev/video0");

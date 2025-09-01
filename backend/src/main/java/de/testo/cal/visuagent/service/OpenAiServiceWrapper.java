@@ -119,16 +119,23 @@ public class OpenAiServiceWrapper {
 
     private MeasurementResponse parseResponse(String responseText) {
         try {
+            // Clean the response text - remove markdown code blocks if present
+            String cleanedResponse = responseText;
+            if (responseText.contains("```json")) {
+                cleanedResponse = responseText.replaceAll("```json\\s*", "").replaceAll("```\\s*", "").trim();
+            }
+            
             // Try to parse as JSON first
-            JsonNode jsonNode = objectMapper.readTree(responseText);
+            JsonNode jsonNode = objectMapper.readTree(cleanedResponse);
             
             if (jsonNode.has("value") && jsonNode.has("confidence")) {
                 float value = (float) jsonNode.get("value").asDouble();
                 float confidence = (float) jsonNode.get("confidence").asDouble();
                 
                 // Ensure confidence is within valid range
-                confidence = Math.max(0.0f, Math.min(1.0f, confidence));
+                confidence = Math.clamp(confidence, 0.0f, 1.0f);
                 
+                log.info("Parsed JSON response: value={}, confidence={}", value, confidence);
                 return new MeasurementResponse(value, confidence);
             }
         } catch (Exception e) {
