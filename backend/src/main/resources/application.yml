@@ -22,3 +22,8 @@ openai:
   model: gpt-4o
   # api:
   #   url: https://api.openai.com/v1/chat/completions
+
+logging:
+  level:
+    root: INFO
+#    root: DEBUG

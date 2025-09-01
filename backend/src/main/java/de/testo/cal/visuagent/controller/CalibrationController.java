@@ -22,14 +22,14 @@ public class CalibrationController {
 
     @PostMapping
     public ResponseEntity<Calibration> createCalibration(@RequestBody Calibration calibration) {
-        log.debug("Request to create a calibration : {}", calibration);
+        log.info("Request to create a calibration : {}", calibration);
         Calibration created = calibrationService.create(calibration);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping
     public ResponseEntity<List<Calibration>> getAllCalibrations() {
-        log.debug("Request to get all calibrations");
+        log.info("Request to get all calibrations");
         List<Calibration> calibrations = calibrationService.findAll();
         return ResponseEntity.ok(calibrations);
     }
@@ -38,7 +38,7 @@ public class CalibrationController {
     public ResponseEntity<Calibration> getCalibrationById(
             @PathVariable String orderNumber,
             @PathVariable String equipmentNumber) {
-        log.debug("Request to get Calibration by id : {}", orderNumber);
+        log.info("Request to get Calibration by id : {}", orderNumber);
         return calibrationService.findById(orderNumber, equipmentNumber)
                 .map(calibration -> ResponseEntity.ok(calibration))
                 .orElse(ResponseEntity.notFound().build());
@@ -49,7 +49,7 @@ public class CalibrationController {
             @PathVariable String orderNumber,
             @PathVariable String equipmentNumber,
             @RequestBody Calibration calibration) {
-        log.debug("Request to update Calibration by id : {}", orderNumber);
+        log.info("Request to update Calibration by id : {}", orderNumber);
         CalibrationId id = new CalibrationId(orderNumber, equipmentNumber);
         calibration.setId(id);
 
@@ -65,7 +65,7 @@ public class CalibrationController {
     public ResponseEntity<Void> deleteCalibration(
             @PathVariable String orderNumber,
             @PathVariable String equipmentNumber) {
-        log.debug("Request to delete Calibration by id : {}", orderNumber);
+        log.info("Request to delete Calibration by id : {}", orderNumber);
         CalibrationId id = new CalibrationId(orderNumber, equipmentNumber);
 
         if (!calibrationService.existsById(id)) {
@@ -80,7 +80,7 @@ public class CalibrationController {
     public ResponseEntity<Boolean> existsCalibration(
             @PathVariable String orderNumber,
             @PathVariable String equipmentNumber) {
-        log.debug("Request to get Calibration by id : {}", orderNumber);
+        log.info("Request to get Calibration by id : {}", orderNumber);
         boolean exists = calibrationService.existsById(orderNumber, equipmentNumber);
         return ResponseEntity.ok(exists);
     }
