@@ -10,15 +10,17 @@ import {CalibrationService} from '../services/calibration.service';
             <h2>Settings</h2>
             <mat-form-field appearance="fill">
                 <mat-label>Auftragsnummer</mat-label>
-                <input matInput maxlength="20" [(ngModel)]="orderNumber" pattern="[a-zA-Z0-9]*" title="Nur Zahlen und Buchstaben">
+                <input matInput maxlength="20" [(ngModel)]="orderNumber" pattern="[a-zA-Z0-9]*"
+                       title="Nur Zahlen und Buchstaben">
             </mat-form-field>
             <mat-form-field appearance="fill">
                 <mat-label>Equipmentnummer</mat-label>
-                <input matInput maxlength="20" [(ngModel)]="equipmentNumber" pattern="[a-zA-Z0-9]*" title="Nur Zahlen und Buchstaben">
+                <input matInput maxlength="20" [(ngModel)]="equipmentNumber" pattern="[a-zA-Z0-9]*"
+                       title="Nur Zahlen und Buchstaben">
             </mat-form-field>
             <mat-form-field appearance="fill">
                 <mat-label>Bemerkung</mat-label>
-                <textarea matInput maxlength="1000"></textarea>
+                <textarea matInput maxlength="1000" [(ngModel)]="remark"></textarea>
             </mat-form-field>
             <div *ngIf="roi$ | async as roi" class="roi-fields">
                 <mat-form-field appearance="fill">
@@ -38,8 +40,10 @@ import {CalibrationService} from '../services/calibration.service';
                     <input matInput [value]="roi?.height" readonly>
                 </mat-form-field>
             </div>
-            <button mat-raised-button color="accent" id="createProjekt" (click)="createProject()">Projekt anlegen</button>
-            <button mat-raised-button color="primary" id="triggerAI" (click)="triggerAI.emit()">Wert erkennen</button>
+            <button mat-raised-button color="primary" id="triggerAI" (click)="triggerAI.emit()" [disabled]="!isAITriggerEnabled()">Wert erkennen</button>
+            <button mat-raised-button color="accent" id="createProjekt" (click)="createProject()"
+                    [disabled]="!isProjectCreationEnabled()">Projekt anlegen
+            </button>
         </mat-card>
     `,
     styles: [`
@@ -89,6 +93,11 @@ import {CalibrationService} from '../services/calibration.service';
             margin-bottom: 8px;
         }
 
+        button[disabled] {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         .roi-fields {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -103,12 +112,39 @@ export class SettingsComponent {
     roi$;
     orderNumber = '';
     equipmentNumber = '';
+    remark = '';
+    private currentRoi: any = null;
 
     constructor(
         private readonly store: Store<AppState>,
         private readonly calibrationService: CalibrationService
     ) {
         this.roi$ = this.store.pipe(select(state => state.measurement.roi));
+
+        // Subscribe to ROI changes to keep track of current ROI
+        this.roi$.subscribe(roi => {
+            this.currentRoi = roi;
+        });
+    }
+
+    isAITriggerEnabled(): boolean {
+        // Check if ROI is available with valid coordinates
+        return this.currentRoi &&
+            this.currentRoi.x >= 0 &&
+            this.currentRoi.y >= 0 &&
+            this.currentRoi.width > 0 &&
+            this.currentRoi.height > 0;
+    }
+
+    isProjectCreationEnabled(): boolean {
+        // Check if orderNumber and equipmentNumber are provided and not empty
+        const hasOrderNumber = this.orderNumber && this.orderNumber.trim().length > 0;
+        const hasEquipmentNumber = this.equipmentNumber && this.equipmentNumber.trim().length > 0;
+
+        // Check if ROI is available with valid coordinates
+        const hasValidRoi = this.isAITriggerEnabled(); // Reuse the ROI validation logic
+
+        return hasOrderNumber && hasEquipmentNumber && hasValidRoi;
     }
 
     createProject() {
@@ -117,15 +153,40 @@ export class SettingsComponent {
             return;
         }
 
-        this.calibrationService.createCalibration({
+        // Prepare calibration data with imageArea and remark
+        const calibrationData: any = {
             id: {
                 orderNumber: this.orderNumber,
                 equipmentNumber: this.equipmentNumber
             }
-        }).subscribe({
+        };
+
+        // Add remark if provided
+        if (this.remark?.trim()) {
+            calibrationData.remark = this.remark.trim();
+        }
+
+        // Add imageArea (ROI coordinates) if available
+        if (this.currentRoi) {
+            calibrationData.imageArea = {
+                x: this.currentRoi.x,
+                y: this.currentRoi.y,
+                width: this.currentRoi.width,
+                height: this.currentRoi.height
+            };
+        }
+
+        console.log('Creating calibration with data:', calibrationData);
+
+        this.calibrationService.createCalibration(calibrationData).subscribe({
             next: (calibration) => {
                 alert('Projekt erfolgreich angelegt');
                 console.log('Calibration created:', calibration);
+
+                // Clear form after successful creation
+                this.orderNumber = '';
+                this.equipmentNumber = '';
+                this.remark = '';
             },
             error: (error) => {
                 alert('Fehler beim Anlegen des Projekts');
