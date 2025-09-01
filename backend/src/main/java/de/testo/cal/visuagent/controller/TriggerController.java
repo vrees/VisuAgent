@@ -6,6 +6,7 @@ import de.testo.cal.visuagent.model.TriggerResponse;
 import de.testo.cal.visuagent.service.MeasurementTriggerService;
 import de.testo.cal.visuagent.service.MeasurementTriggerService.CalibrationNotFoundException;
 import de.testo.cal.visuagent.service.MeasurementTriggerService.MeasurementException;
+import de.testo.cal.visuagent.service.WebSocketMessagingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 public class TriggerController {
     
     private final MeasurementTriggerService measurementTriggerService;
+    private final WebSocketMessagingService webSocketMessagingService;
     
     @Operation(summary = "Trigger measurement extraction from external system",
                description = "Triggers AI-based measurement extraction using stored calibration data")
@@ -44,34 +46,49 @@ public class TriggerController {
                 request.getOrderNumber(), request.getEquipmentNumber());
         
         try {
+            // Broadcast processing status to frontend
+            webSocketMessagingService.broadcastStatusMessage("processing", 
+                "Measurement processing started for order: " + request.getOrderNumber());
+            
             // Trigger the measurement process
             ExtendedMeasurementResult result = measurementTriggerService.triggerMeasurement(request);
             
-            // TODO: Send result to frontend via WebSocket/SSE (Phase 3)
-            // For now, we just log the result
-            log.info("Measurement result ready for frontend: value={}, confidence={}", 
-                    result.getValue(), result.getConfidence());
+            // Broadcast result to frontend via WebSocket
+            webSocketMessagingService.broadcastMeasurementResult(result);
+            
+            // Also broadcast success status
+            webSocketMessagingService.broadcastStatusMessage("success", 
+                "Measurement completed successfully", result.getSessionId());
+            
+            log.info("Measurement result broadcasted to frontend: sessionId={}, value={}, confidence={}", 
+                    result.getSessionId(), result.getValue(), result.getConfidence());
             
             TriggerResponse response = TriggerResponse.success(
                 result.getSessionId(),
-                "Measurement triggered successfully"
+                "Measurement triggered and result sent to frontend"
             );
             
             return ResponseEntity.ok(response);
             
         } catch (CalibrationNotFoundException e) {
             log.warn("Calibration not found: {}", e.getMessage());
+            webSocketMessagingService.broadcastStatusMessage("error", 
+                "Calibration not found: " + e.getMessage());
             TriggerResponse response = TriggerResponse.notFound(e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             
         } catch (MeasurementException e) {
             log.error("Measurement processing failed: {}", e.getMessage());
+            webSocketMessagingService.broadcastStatusMessage("error", 
+                "Measurement processing failed: " + e.getMessage());
             TriggerResponse response = TriggerResponse.error(
                 "Measurement processing failed: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             
         } catch (Exception e) {
             log.error("Unexpected error during measurement trigger: {}", e.getMessage(), e);
+            webSocketMessagingService.broadcastStatusMessage("error", 
+                "Internal server error occurred");
             TriggerResponse response = TriggerResponse.error(
                 "Internal server error occurred");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
