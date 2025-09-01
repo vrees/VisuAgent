@@ -27,7 +27,7 @@ export interface Calibration {
     providedIn: 'root'
 })
 export class CalibrationService {
-    private readonly apiUrl = `${environment.apiUrl}/api/calibration`;
+    private readonly apiUrl = `${environment.apiUrl}/calibration`;
 
     constructor(private http: HttpClient) {
     }

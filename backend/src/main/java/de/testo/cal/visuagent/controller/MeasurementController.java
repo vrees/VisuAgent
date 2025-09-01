@@ -19,6 +19,7 @@ import java.util.Base64;
  */
 @RestController
 @RequestMapping("/api/measurements")
+@CrossOrigin(origins = "http://localhost:4200")
 @RequiredArgsConstructor
 public class MeasurementController {
 

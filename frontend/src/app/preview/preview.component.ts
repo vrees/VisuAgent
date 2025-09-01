@@ -17,17 +17,17 @@ import { refreshPreview } from '../store/measurement.actions';
           <div class="result-section">
             <h3 class="result-title">Erkannter Wert</h3>
             <div class="result-value">
-              <ng-container *ngIf="value$ | async as value; else processingOrNoResult">
-                {{ value }}
+              <ng-container *ngIf="currentValue !== null; else processingOrNoResult">
+                {{ currentValue }}
               </ng-container>
               <ng-template #processingOrNoResult>
                 ?
               </ng-template>
             </div>
-            <div class="confidence-section" *ngIf="confidence$ | async as confidence">
+            <div class="confidence-section" *ngIf="currentConfidence !== null">
               <span class="confidence-label">Konfidenz:</span>
-              <span class="confidence-value" [ngClass]="getConfidenceClass(confidence)">
-                {{ (confidence * 100) | number:'1.0-0' }}%
+              <span class="confidence-value" [ngClass]="getConfidenceClass(currentConfidence)">
+                {{ (currentConfidence * 100) | number:'1.0-0' }}%
               </span>
             </div>
           </div>
@@ -139,12 +139,29 @@ export class PreviewComponent implements OnDestroy {
   confidence$;
   roi$;
   roiImageUrl: string | null = null;
+  currentValue: number | null = null;
+  currentConfidence: number | null = null;
   private subscription = new Subscription();
 
   constructor(private store: Store<AppState>, private actions$: Actions) {
     this.value$ = this.store.pipe(select(state => state.measurement.value));
     this.confidence$ = this.store.pipe(select(state => state.measurement.confidence));
     this.roi$ = this.store.pipe(select(state => state.measurement.roi));
+    
+    // Value and confidence subscriptions
+    this.subscription.add(
+      this.value$.subscribe(value => {
+        this.currentValue = value;
+        console.log('Value updated:', value);
+      })
+    );
+    
+    this.subscription.add(
+      this.confidence$.subscribe(confidence => {
+        this.currentConfidence = confidence;
+        console.log('Confidence updated:', confidence);
+      })
+    );
     
     // ROI-Änderungen überwachen und Preview aktualisieren
     this.subscription.add(

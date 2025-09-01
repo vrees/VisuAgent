@@ -4,6 +4,7 @@ import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
  */
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "http://localhost:4200")
 @Slf4j
 public class StreamController {
 
@@ -79,9 +81,9 @@ public class StreamController {
 
     private void startCameraCapture() {
         if (cameraAvailable) {
-            // Start continuous capture every 500ms
-            cameraScheduler.scheduleAtFixedRate(this::captureFrameAsync, 0, 200, TimeUnit.MILLISECONDS);
-            log.info("Started continuous camera capture");
+            // Start continuous capture every 2 seconds (slower to avoid conflicts)
+            cameraScheduler.scheduleAtFixedRate(this::captureFrameAsync, 0, 2000, TimeUnit.MILLISECONDS);
+            log.info("Started continuous camera capture at 0.5 FPS");
         }
     }
 
@@ -94,16 +96,17 @@ public class StreamController {
                 cameraProcess.destroyForcibly();
             }
 
-            // Use ffmpeg to capture a single frame from camera
+            // Use ffmpeg to capture a single frame from camera with increased timeout
             ProcessBuilder pb = new ProcessBuilder(
                     "ffmpeg", "-f", "v4l2", "-i", "/dev/video0",
-                    "-vframes", "1", "-f", "image2", "-vcodec", "mjpeg", "-y", filename
+                    "-vframes", "1", "-f", "image2", "-vcodec", "mjpeg", 
+                    "-timeout", "3000000", "-y", filename  // 3 second timeout for input
             );
             pb.redirectErrorStream(true);
             cameraProcess = pb.start();
 
-            // Wait for completion with timeout
-            boolean finished = cameraProcess.waitFor(2, TimeUnit.SECONDS);
+            // Wait for completion with longer timeout (5 seconds for slow camera)
+            boolean finished = cameraProcess.waitFor(5, TimeUnit.SECONDS);
 
             if (finished && cameraProcess.exitValue() == 0) {
                 // Read captured frame
@@ -117,6 +120,10 @@ public class StreamController {
                     cameraProcess.destroyForcibly();
                 }
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.warn("Camera capture interrupted: {}", e.getMessage());
+            cameraAvailable = false;
         } catch (Exception e) {
             log.error("Async camera capture failed: {}", e.getMessage());
             cameraAvailable = false;
@@ -125,12 +132,34 @@ public class StreamController {
 
     private void initializeCamera() {
         try {
+            // Check if /dev/video0 exists and is accessible
+            Path videoDevice = Path.of("/dev/video0");
+            if (!Files.exists(videoDevice)) {
+                log.warn("No camera device found at /dev/video0");
+                cameraAvailable = false;
+                return;
+            }
+            
             // Try to detect available cameras using v4l2-ctl
             ProcessBuilder pb = new ProcessBuilder("v4l2-ctl", "--list-devices");
+            pb.redirectErrorStream(true);
             Process process = pb.start();
-            int exitCode = process.waitFor();
-            cameraAvailable = (exitCode == 0);
-            log.info("Camera detection: {}", cameraAvailable ? "USB camera found" : "No camera detected, using fallback");
+            boolean finished = process.waitFor(2, TimeUnit.SECONDS);
+            
+            if (finished && process.exitValue() == 0) {
+                cameraAvailable = true;
+                log.info("USB camera detected: JOYACCESS camera found at /dev/video0");
+            } else {
+                log.warn("Camera detection timed out or failed, using fallback");
+                cameraAvailable = false;
+                if (process.isAlive()) {
+                    process.destroyForcibly();
+                }
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.warn("Camera detection interrupted: {}, using fallback", e.getMessage());
+            cameraAvailable = false;
         } catch (Exception e) {
             log.warn("Camera detection failed: {}, using fallback", e.getMessage());
             cameraAvailable = false;

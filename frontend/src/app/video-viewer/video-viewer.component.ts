@@ -3,6 +3,7 @@ import { Store, select } from '@ngrx/store';
 import { setRoi, setMeasurement, refreshPreview, clearMeasurement } from '../store/measurement.actions';
 import { AppState } from '../store';
 import { MeasurementService } from '../services/measurement.service';
+import { environment } from '../../environments/environment';
 
 @Component({
     selector: 'app-video-viewer',
@@ -19,7 +20,7 @@ export class VideoViewerComponent implements AfterViewInit, OnDestroy {
   private startY = 0;
   private roi: { x: number, y: number, width: number, height: number } | null = null;
   roi$;
-  streamUrl = '/api/stream';
+  streamUrl = `${environment.apiUrl}/stream`;
   private refreshTimer: any;
 
   constructor(private store: Store<AppState>, private measurementService: MeasurementService) {
@@ -74,7 +75,7 @@ export class VideoViewerComponent implements AfterViewInit, OnDestroy {
     };
     
     // Aktuelles Stream-Bild laden
-    currentStreamImage.src = `/api/stream?t=${Date.now()}`;
+    currentStreamImage.src = `${environment.apiUrl}/stream?t=${Date.now()}`;
   }
 
   ngAfterViewInit() {
@@ -98,7 +99,7 @@ export class VideoViewerComponent implements AfterViewInit, OnDestroy {
   private startAutoRefresh() {
     this.refreshTimer = setInterval(() => {
       // Add timestamp to force reload
-      this.streamUrl = '/api/stream?t=' + Date.now();
+      this.streamUrl = `${environment.apiUrl}/stream?t=` + Date.now();
     }, 1000); // 1 FPS
   }
 
@@ -192,7 +193,7 @@ export class VideoViewerComponent implements AfterViewInit, OnDestroy {
     console.error('Image loading failed:', event);
     // Retry after a short delay
     setTimeout(() => {
-      this.streamUrl = '/api/stream?t=' + Date.now();
+      this.streamUrl = `${environment.apiUrl}/stream?t=` + Date.now();
     }, 1000);
   }
 }

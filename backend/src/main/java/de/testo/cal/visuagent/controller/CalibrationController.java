@@ -4,6 +4,7 @@ import de.testo.cal.visuagent.model.Calibration;
 import de.testo.cal.visuagent.model.CalibrationId;
 import de.testo.cal.visuagent.service.CalibrationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,19 +13,23 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/calibration")
+@CrossOrigin(origins = "http://localhost:4200")
 @RequiredArgsConstructor
+@Slf4j
 public class CalibrationController {
 
     private final CalibrationService calibrationService;
 
     @PostMapping
     public ResponseEntity<Calibration> createCalibration(@RequestBody Calibration calibration) {
+        log.debug("Request to create a calibration : {}", calibration);
         Calibration created = calibrationService.create(calibration);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping
     public ResponseEntity<List<Calibration>> getAllCalibrations() {
+        log.debug("Request to get all calibrations");
         List<Calibration> calibrations = calibrationService.findAll();
         return ResponseEntity.ok(calibrations);
     }
@@ -33,6 +38,7 @@ public class CalibrationController {
     public ResponseEntity<Calibration> getCalibrationById(
             @PathVariable String orderNumber,
             @PathVariable String equipmentNumber) {
+        log.debug("Request to get Calibration by id : {}", orderNumber);
         return calibrationService.findById(orderNumber, equipmentNumber)
                 .map(calibration -> ResponseEntity.ok(calibration))
                 .orElse(ResponseEntity.notFound().build());
@@ -43,6 +49,7 @@ public class CalibrationController {
             @PathVariable String orderNumber,
             @PathVariable String equipmentNumber,
             @RequestBody Calibration calibration) {
+        log.debug("Request to update Calibration by id : {}", orderNumber);
         CalibrationId id = new CalibrationId(orderNumber, equipmentNumber);
         calibration.setId(id);
 
@@ -58,6 +65,7 @@ public class CalibrationController {
     public ResponseEntity<Void> deleteCalibration(
             @PathVariable String orderNumber,
             @PathVariable String equipmentNumber) {
+        log.debug("Request to delete Calibration by id : {}", orderNumber);
         CalibrationId id = new CalibrationId(orderNumber, equipmentNumber);
 
         if (!calibrationService.existsById(id)) {
@@ -72,6 +80,7 @@ public class CalibrationController {
     public ResponseEntity<Boolean> existsCalibration(
             @PathVariable String orderNumber,
             @PathVariable String equipmentNumber) {
+        log.debug("Request to get Calibration by id : {}", orderNumber);
         boolean exists = calibrationService.existsById(orderNumber, equipmentNumber);
         return ResponseEntity.ok(exists);
     }
