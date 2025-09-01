@@ -8,9 +8,12 @@ import { VideoViewerComponent } from './video-viewer/video-viewer.component';
 import { SettingsComponent } from './settings/settings.component';
 import { PreviewComponent } from './preview/preview.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { StatusIndicatorComponent } from './status-indicator/status-indicator.component';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { reducers } from './store';
+import { WebSocketEffects } from './store/websocket.effects';
+import { WebSocketService } from './services/websocket.service';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -25,7 +28,8 @@ import { HttpClientModule } from '@angular/common/http';
     VideoViewerComponent,
     SettingsComponent,
     PreviewComponent,
-    DashboardComponent
+    DashboardComponent,
+    StatusIndicatorComponent
   ],
   imports: [
     BrowserModule,
@@ -42,7 +46,7 @@ import { HttpClientModule } from '@angular/common/http';
     MatCardModule,
     MatFormFieldModule
   ],
-  providers: [],
+  providers: [WebSocketService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
