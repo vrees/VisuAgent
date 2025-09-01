@@ -27,8 +27,7 @@ public class MeasurementController {
     /**
      * Receives an image and ROI, sends it to the AI, and returns the measurement value and confidence.
      *
-     * @param file   the image file (ROI)
-     * @param prompt the prompt for the AI (optional)
+     * @param file the image file (ROI)
      * @return measurement value and confidence
      */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
