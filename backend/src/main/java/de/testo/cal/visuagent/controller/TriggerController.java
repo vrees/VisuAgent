@@ -65,7 +65,8 @@ public class TriggerController {
             
             TriggerResponse response = TriggerResponse.success(
                 result.getSessionId(),
-                "Measurement triggered and result sent to frontend"
+                "Measurement triggered and result sent to frontend",
+                result
             );
             
             return ResponseEntity.ok(response);
@@ -74,7 +75,8 @@ public class TriggerController {
             log.warn("Calibration not found: {}", e.getMessage());
             webSocketMessagingService.broadcastStatusMessage("error", 
                 "Calibration not found: " + e.getMessage());
-            TriggerResponse response = TriggerResponse.notFound(e.getMessage());
+            TriggerResponse response = TriggerResponse.notFound(e.getMessage(), 
+                request.getOrderNumber(), request.getEquipmentNumber());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             
         } catch (MeasurementException e) {
@@ -82,7 +84,8 @@ public class TriggerController {
             webSocketMessagingService.broadcastStatusMessage("error", 
                 "Measurement processing failed: " + e.getMessage());
             TriggerResponse response = TriggerResponse.error(
-                "Measurement processing failed: " + e.getMessage());
+                "Measurement processing failed: " + e.getMessage(),
+                request.getOrderNumber(), request.getEquipmentNumber());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             
         } catch (Exception e) {
@@ -90,7 +93,8 @@ public class TriggerController {
             webSocketMessagingService.broadcastStatusMessage("error", 
                 "Internal server error occurred");
             TriggerResponse response = TriggerResponse.error(
-                "Internal server error occurred");
+                "Internal server error occurred",
+                request.getOrderNumber(), request.getEquipmentNumber());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
