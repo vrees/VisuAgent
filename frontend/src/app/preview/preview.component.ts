@@ -224,6 +224,15 @@ export class PreviewComponent implements OnDestroy {
       this.webSocketService.getMeasurementResults().subscribe(externalMeasurement => {
         this.currentExternalMeasurement = externalMeasurement;
         console.log('External measurement updated:', externalMeasurement);
+        console.log('ROI Image Base64 length:', externalMeasurement.roiImageBase64?.length || 'null/undefined');
+        
+        // If external measurement includes ROI image, display it
+        if (externalMeasurement.roiImageBase64) {
+          console.log('Updating ROI preview from external measurement');
+          this.updateRoiPreviewFromBase64(externalMeasurement.roiImageBase64);
+        } else {
+          console.warn('External measurement does not contain roiImageBase64');
+        }
       })
     );
     
@@ -255,6 +264,40 @@ export class PreviewComponent implements OnDestroy {
     this.subscription.unsubscribe();
     if (this.roiImageUrl) {
       URL.revokeObjectURL(this.roiImageUrl);
+    }
+  }
+
+  private updateRoiPreviewFromBase64(base64Image: string): void {
+    try {
+      // Altes URL freigeben
+      if (this.roiImageUrl) {
+        URL.revokeObjectURL(this.roiImageUrl);
+      }
+      
+      let cleanBase64 = base64Image;
+      
+      // Entfernen des Data-URL Präfixes falls vorhanden
+      if (base64Image.startsWith('data:image')) {
+        const base64Index = base64Image.indexOf(',');
+        if (base64Index !== -1) {
+          cleanBase64 = base64Image.substring(base64Index + 1);
+        }
+      }
+      
+      // Base64 zu Blob konvertieren
+      const byteCharacters = atob(cleanBase64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'image/jpeg' });
+      
+      // Neue URL erstellen
+      this.roiImageUrl = URL.createObjectURL(blob);
+      console.log('ROI preview updated from external measurement');
+    } catch (error) {
+      console.error('Error updating ROI preview from base64:', error);
     }
   }
 
