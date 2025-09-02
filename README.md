@@ -1,101 +1,201 @@
-## VisuAgent Application
+# VisuAgent - AI-Powered Measurement Value Recognition
 
-Bitte erstelle eine Spring Boot Anwendung mit Maven mit dem Namen 'VisuAgent'. 
-Die Anwendung soll im Kalibrierlabor der Firma Testo verwendet werden um Messwerte von Prüfobjekten zu lesen und zu erkennen. 
-Eine Kamera, die per USB angeschlossen wird, soll dazu Bilder und Videos von den Displays verschiedener Prüfobjekte (Messgeräte) aufnehmen. VideoUrl: "/api/stream"
-Die Anwendung soll eine einfache Benutzeroberfläche haben, die es dem Benutzer ermöglicht das Video der Kamera darzustellen und die Ergebnisse anzuzeigen.
-Als Frontend soll das Framework Angular UI verwendet werden. 
+![VisuAgent Screenshot](doc/pic/VisuAgent-Screenshot.jpg)
 
-Falls es zu aufwendig ist ein Video darzustellen, können auch einzelne Bilder verwendet werden, die in regelmässigen Abständen aufgenommen werden. 
-Dabei sollte die Frequenz, in der die Bilder dargestellte werden, konfigurierbare sein, zum Beispiel 2 Bilder pro Sekunde
+VisuAgent ist eine Spring Boot + Angular Anwendung für Kalibrierlabore zur automatischen Extraktion von Messwerten aus Gerätedisplays mittels Kamera-Input und OpenAI Vision API. Das System erfasst Live-Video/Bilder von USB-Kameras, ermöglicht Benutzern die Auswahl von ROI-Bereichen (Region of Interest) und nutzt KI zur Erkennung angezeigter Messwerte.
 
-Der Benutzer soll ein Bereich des Bildes auswählen können, in dem der Messwert angezeigt wird. Die Koordinaten des markierten Bereichs sollen in der Session gespeichert werden.
-Dazu soll Redux verwendet werden, um den Zustand der Anwendung zu verwalten.
+## Funktionsweise
 
-Der markierte Bildausschnitte wird dann extrahiert und an ans Spring Boot Backend gesendet. 
-Die Anwendung soll eine REST-API (Path '/api/measurements') bereitstellen, die den markierten Bildausschnitt entgegennimmt und an eine KI gesendet, die den Messwert erkennt und zurückliefert.
+### 1. Kalibrierung einrichten
+1. **Eingabe der Stammdaten**: Benutzer gibt Auftragsnummer und Gerätenummer ein
+2. **ROI-Auswahl**: Markierung des Bereichs im Live-Kamera-Stream, wo der Messwert angezeigt wird
+3. **Preview**: Der ausgewählte Ausschnitt wird im Preview-Fenster angezeigt
+4. **Kalibrierung speichern**: Mit Klick auf "Projekt anlegen" wird die Konfiguration gespeichert
 
-Als KI soll OpenaAi Platform verwendet werden: https://api.openai.com/... 
-Zusammen mit dem Bildausschnitt und dem Prompt 'Extract the measurement value and unit from the image' wird die KI den Messwert und die Einheit erkennen und zurückliefern.
-In der Antwort soll die KI dann den Messwert und die Messgrösse zurückliefern, zum Beispiel '23.5 Newton' oder '12.3 Volt' oder '1.2 bar'.
-Dieser Wert soll dann im unteren rechten Teil des Dashboards angezeigt werden.
+### 2. AI-basierte Messwerterfassung
+- **Bildverarbeitung**: Nur der ROI-Bereich (der eigentliche Messwert) wird zur KI geschickt
+- **OpenAI Vision**: Die KI analysiert das Bild und extrahiert den Messwert
+- **Konfidenz-Bewertung**: Indikator (0-100%), wie sicher die KI den Wert erkannt hat
+  - 90% = Wert wurde ziemlich sicher erkannt
+  - Bei schlechter Bildqualität (z.B. Spiegelung) sinkt die Konfidenz
 
-Zusätzliche Anforderungen:
-- Verwende eine allgemein gut verfügbare und einfache Angular UI Library
-- all notwendigen API sollen mit  /api/... beginnen
-- verwende bei der Code-Erstellung englische Begriffe, Namen und Dokumentation
-- verwende gängige gut verfügbare Libraries, idealerweise OpenSource
-- verwende aktuelle Versionen der Libraries
-- verwende Java 21
-- verwende Spring Boot 3.5.4
-- erstelle sowohl für Frontend als auch für das Backend eine README.md Datei mit den wichtigsten Informationen zur Installation und zum Starten der Anwendung
-- die Anwendung soll in Deutsch kommentiert sein
-- die Anwendung soll in der Lage sein, Bilder und Videos von der Kamera aufzunehmen und darzustellen
-- die Anwendung soll in der Lage sein, den markierten Bildausschnitt zu extrahieren und an die REST-API zu senden
-- die Anwendung soll in der Lage sein, die Antwort der KI zu empfangen und anzuzeigen
-- die Anwendung soll in der Lage sein, den Zustand der Anwendung mit Redux zu verwalten
-- die Anwendung soll in der Lage sein, die Koordinaten des markierten Bereich des Bildes in der Session zu speichern
-- die Anwendung soll eine einfache Benutzeroberfläche haben, die es dem Benutzer ermöglicht, das Video der Kamera darzustellen und die Ergebnisse anzuzeigen
-- Erstelle JUnit Tests für das Backend 
-- Erstelle Playwrite für das Frontend (https://playwright.dev/)
-- Port für das Backend: 8082
-- Port für das Frontend: 4200
-- Frontend und Backend sollen im gleichen Repo liegen. Das Frontend soll im Ordner 'frontend' und das Backend soll root folder sein.
-- Das Frontend soll 2 componenten haben: 
-- eine Komponente für die Anzeige des Videos der Kamera
-- eine Komponente mit dem Namen 'Einstellungen'. Diese Seite ist derzeit noch leer, aber sie soll später für die Einstellungen der Anwendung verwendet werden.
-- Erstelle eine CI/CD Pipeline mit GitHub Actions, die das Backend und das Frontend baut und testet.
+### 3. Externe API-Integration
+
+Ihr Messverstärker/System kann einfach einen API-Call absetzen:
+
+**Request:**
+```http
+POST http://localhost:8082/api/trigger
+Content-Type: application/json
+
+{
+  "orderNumber": "3780161",
+  "equipmentNumber": "3689234"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Measurement triggered and result sent to frontend",
+  "sessionId": "163cb355-4ccd-4a57-90f1-00c9b58fc5c5",
+  "timestamp": "2025-09-02T09:07:23.793437462",
+  "value": 309.8,
+  "confidence": 0.9,
+  "roiImageBase64": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgA....",
+  "orderNumber": "3780161",
+  "equipmentNumber": "3689234"
+}
+```
+
+**Response-Felder:**
+- `value`: Von der KI erkannter Messwert
+- `confidence`: Konfidenz-Level (0.0-1.0)
+- `roiImageBase64`: Das Preview-Bild, das zur KI geschickt wurde (Base64-codiert)
+- `orderNumber/equipmentNumber`: Zur Verifikation
+
+## Architektur
+
+### Backend (Spring Boot 3.5.4, Java 21)
+- **Port**: 8082
+- **Main Package**: `de.testo.cal.visuagent`
+- **Key Components**:
+  - `TriggerController` - Externe API (`/api/trigger`)
+  - `MeasurementController` - Measurement processing (`/api/measurements`)  
+  - `StreamController` - Video streaming (`/api/stream`)
+  - `OpenAiServiceWrapper` - OpenAI integration
+  - `WebSocketMessagingService` - Real-time communication
+
+### Frontend (Angular 20, TypeScript)
+- **Port**: 4200
+- **State Management**: NgRx (Redux pattern)
+- **UI Library**: Angular Material
+- **Key Components**:
+  - `VideoViewerComponent` - Live-Kamera und ROI-Auswahl
+  - `DashboardComponent` - Hauptanwendung
+  - `SettingsComponent` - Konfiguration
+  - `PreviewComponent` - ROI-Vorschau und Messergebnisse
+  - `StatusIndicatorComponent` - WebSocket-Verbindungsstatus
+
+## Installation & Setup
+
+### Voraussetzungen
+- Java 21+
+- Node.js 18+
+- OpenAI API Key
+- USB-Kamera
+
+### Backend starten
+```bash
+cd backend
+export OPENAI_API_KEY="your-api-key-here"
+./mvnw spring-boot:run
+```
+
+### Frontend starten
+```bash
+cd frontend
+npm install
+npm start
+```
+
+### Zugriff
+- **Frontend**: http://localhost:4200
+- **Backend API**: http://localhost:8082
+- **OpenAPI Docs**: http://localhost:8082/swagger-ui.html
+
+## Konfiguration
+
+### Umgebungsvariablen
+```bash
+# Backend
+export OPENAI_API_KEY="sk-proj-your-key"
+export OPENAI_API_URL="https://api.openai.com/v1"
+```
+
+### Kamera-Setup
+- USB-Kamera wird automatisch erkannt (`/dev/video0`)
+- Unterstützte Kameras: JOYACCESS und Standard UVC-Kameras
+- Stream-Format: MJPEG, 5 FPS
+
+## API-Dokumentation
+
+### Trigger API (Externe Integration)
+```http
+POST /api/trigger
+```
+
+**Erfolgreiche Response:**
+- `status`: "success"
+- `value`: Erkannter Messwert (Float)
+- `confidence`: KI-Konfidenz (0.0-1.0)
+- `roiImageBase64`: Base64-kodiertes Vorschaubild
+
+**Fehler-Response:**
+- `status`: "not_found" | "error"
+- `message`: Fehlerbeschreibung
+- Messwert-Felder sind `null`
+
+### Weitere Endpoints
+- `GET /api/stream` - Live-Kamera-Stream
+- `POST /api/measurements` - Manuelle Messung
+- `GET /api/trigger/health` - Health Check
+
+## Real-Time Features
+
+### WebSocket-Integration
+- **Endpoint**: `ws://localhost:8082/ws`
+- **Topics**:
+  - `/topic/measurement` - Messergebnisse
+  - `/topic/status` - Verarbeitungsstatus
+- **Frontend**: Automatische Anzeige externer Trigger-Ergebnisse
+
+### Status-Indikator
+- WebSocket-Verbindungsstatus
+- Externe Trigger-Aktivität
+- Verarbeitungsstatus mit visuellen Indikatoren
+
+## Entwicklung
+
+### Backend-Tests
+```bash
+./mvnw test
+```
+
+### Frontend-Tests
+```bash
+npm test                # Unit tests (Jasmine/Karma)
+npm run e2e            # E2E tests (Playwright) 
+ng lint                # Linting
+```
+
+### Build
+```bash
+# Backend
+./mvnw clean install
+
+# Frontend  
+npm run build
+```
+
+## Integration in bestehende Systeme
+
+Das System ist so konzipiert, dass es einfach in bestehende Messsysteme integriert werden kann:
+
+1. **Kalibrierung** über das Web-Interface einmalig einrichten
+2. **API-Integration** in euer Messsystem einbauen
+3. **Response-Verarbeitung** ähnlich wie bei manueller Tastatureingabe
+
+Euer Messverstärker muss das JSON-Response verarbeiten und den `value` weiterverwenden. Der Prozess ersetzt die manuelle Tastatureingabe durch automatische KI-Erkennung.
+
+## Support & Entwicklung
+
+- **Technologie-Stack**: Spring Boot, Angular, OpenAI GPT-4o Vision
+- **Datenbank**: H2 (In-Memory) für Kalibrierungsdaten
+- **Logging**: Umfangreiches Logging für Debugging
+- **Error Handling**: Robuste Fehlerbehandlung für Kamera- und API-Ausfälle
 
 ---
 
-# Build & Run Instructions
-
-## Backend (Spring Boot)
-
-- **Build:**
-  ```sh
-  ./mvnw clean install
-  ```
-- **Run:**
-  ```sh
-  ./mvnw spring-boot:run
-  ```
-- **API Doku:**
-  OpenAPI-Spezifikation: `backend-openapi.yaml`
-
-## Frontend (Angular)
-
-- **Install dependencies:**
-  ```sh
-  cd frontend
-  npm ci
-  ```
-- **Run development server:**
-  ```sh
-  npm start
-  ```
-  (Standard: http://localhost:4200)
-
-## Tests
-
-- **Backend:**
-  ```sh
-  ./mvnw test
-  ```
-- **Frontend:**
-  ```sh
-  cd frontend
-  npm test
-  ```
-
-## CI/CD
-
-- GitHub Actions Workflow unter `.github/workflows/ci.yml` baut und testet Backend & Frontend automatisch bei jedem Push/PR.
-- Für Deployment kann der Workflow um weitere Schritte ergänzt werden (z.B. Docker, Cloud Deploy).
-
----
-
-# Projektstruktur
-- Backend: Java 21, Spring Boot 3.5.4, REST API, OpenAPI, JUnit
-- Frontend: Angular, Redux, Angular Material, Playwright
-- Siehe PRD (VisuAgent.md) für Details zu Anforderungen und Architektur.
+*VisuAgent - Automatisierte Messwerterfassung für moderne Kalibrierlabore*
