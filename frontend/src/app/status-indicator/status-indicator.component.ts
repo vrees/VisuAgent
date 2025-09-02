@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { AppState } from '../store';
 import { Subscription } from 'rxjs';
+import { WebSocketService } from '../services/websocket.service';
 
 @Component({
   selector: 'app-status-indicator',
@@ -107,21 +108,21 @@ export class StatusIndicatorComponent implements OnDestroy {
   lastExternalStatus: any = null;
   private subscription = new Subscription();
 
-  constructor(private store: Store<AppState>) {
+  constructor(private store: Store<AppState>, private webSocketService: WebSocketService) {
+    // Direct WebSocket connection status since Effects are disabled
     this.subscription.add(
-      this.store.pipe(select(state => state.measurement.webSocketConnected))
-        .subscribe(connected => {
-          this.webSocketConnected = connected;
-        })
+      this.webSocketService.getConnectionStatus().subscribe(connected => {
+        this.webSocketConnected = connected;
+      })
     );
 
+    // Direct WebSocket status messages since Effects are disabled
     this.subscription.add(
-      this.store.pipe(select(state => state.measurement.externalStatus))
-        .subscribe(status => {
-          if (status) {
-            this.lastExternalStatus = status;
-          }
-        })
+      this.webSocketService.getStatusMessages().subscribe(status => {
+        if (status) {
+          this.lastExternalStatus = status;
+        }
+      })
     );
   }
 

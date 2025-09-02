@@ -4,6 +4,7 @@ import { AppState } from '../store';
 import { combineLatest, Subscription } from 'rxjs';
 import { Actions, ofType } from '@ngrx/effects';
 import { refreshPreview } from '../store/measurement.actions';
+import { WebSocketService } from '../services/websocket.service';
 
 @Component({
     selector: 'app-preview',
@@ -197,7 +198,7 @@ export class PreviewComponent implements OnDestroy {
   currentExternalMeasurement: any = null;
   private subscription = new Subscription();
 
-  constructor(private store: Store<AppState>, private actions$: Actions) {
+  constructor(private store: Store<AppState>, private actions$: Actions, private webSocketService: WebSocketService) {
     this.value$ = this.store.pipe(select(state => state.measurement.value));
     this.confidence$ = this.store.pipe(select(state => state.measurement.confidence));
     this.roi$ = this.store.pipe(select(state => state.measurement.roi));
@@ -218,9 +219,9 @@ export class PreviewComponent implements OnDestroy {
       })
     );
     
-    // External measurement subscription
+    // Direct WebSocket external measurement subscription since Effects are disabled
     this.subscription.add(
-      this.externalMeasurement$.subscribe(externalMeasurement => {
+      this.webSocketService.getMeasurementResults().subscribe(externalMeasurement => {
         this.currentExternalMeasurement = externalMeasurement;
         console.log('External measurement updated:', externalMeasurement);
       })
