@@ -3,7 +3,7 @@ import { Store, select } from '@ngrx/store';
 import { AppState } from '../store';
 import { combineLatest, Subscription } from 'rxjs';
 import { Actions, ofType } from '@ngrx/effects';
-import { refreshPreview } from '../store/measurement.actions';
+import { refreshPreview, externalMeasurementReceived } from '../store/measurement.actions';
 import { WebSocketService } from '../services/websocket.service';
 
 @Component({
@@ -219,12 +219,33 @@ export class PreviewComponent implements OnDestroy {
       })
     );
     
-    // Direct WebSocket external measurement subscription since Effects are disabled
+    // Subscribe to external measurement from store
+    this.subscription.add(
+      this.externalMeasurement$.subscribe(externalMeasurement => {
+        this.currentExternalMeasurement = externalMeasurement;
+        if (externalMeasurement) {
+          console.log('External measurement from store:', externalMeasurement);
+        }
+      })
+    );
+    
+    // Direct WebSocket external measurement subscription - dispatch to store
     this.subscription.add(
       this.webSocketService.getMeasurementResults().subscribe(externalMeasurement => {
-        this.currentExternalMeasurement = externalMeasurement;
-        console.log('External measurement updated:', externalMeasurement);
+        console.log('External measurement from WebSocket:', externalMeasurement);
         console.log('ROI Image Base64 length:', externalMeasurement.roiImageBase64?.length || 'null/undefined');
+        
+        // Dispatch to store instead of setting directly
+        this.store.dispatch(externalMeasurementReceived({
+          value: externalMeasurement.value,
+          confidence: externalMeasurement.confidence,
+          roiImageBase64: externalMeasurement.roiImageBase64,
+          orderNumber: externalMeasurement.orderNumber,
+          equipmentNumber: externalMeasurement.equipmentNumber,
+          sessionId: externalMeasurement.sessionId,
+          triggerSource: externalMeasurement.triggerSource || 'WebSocket',
+          timestamp: externalMeasurement.timestamp || new Date().toISOString()
+        }));
         
         // If external measurement includes ROI image, display it
         if (externalMeasurement.roiImageBase64) {

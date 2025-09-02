@@ -39,6 +39,7 @@ export const measurementReducer = createReducer(
   on(MeasurementActions.setRoi, (state, { roi }) => ({ ...state, roi })),
   on(MeasurementActions.setMeasurement, (state, { value, confidence }) => ({ ...state, value, confidence })),
   on(MeasurementActions.clearMeasurement, (state) => ({ ...state, value: null, confidence: null })),
+  on(MeasurementActions.clearExternalMeasurement, (state) => ({ ...state, externalMeasurement: null })),
   
   // External trigger reducers
   on(MeasurementActions.externalMeasurementReceived, (state, { 

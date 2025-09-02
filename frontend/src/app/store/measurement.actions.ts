@@ -4,6 +4,7 @@ export const setRoi = createAction('[VideoViewer] Set ROI', props<{ roi: { x: nu
 export const setMeasurement = createAction('[Measurement/API] Set Measurement', props<{ value: number, confidence: number }>());
 export const clearMeasurement = createAction('[Settings] Clear Measurement');
 export const refreshPreview = createAction('[Settings] Refresh Preview');
+export const clearExternalMeasurement = createAction('[Measurement] Clear External Measurement');
 
 // External trigger actions
 export const externalMeasurementReceived = createAction(

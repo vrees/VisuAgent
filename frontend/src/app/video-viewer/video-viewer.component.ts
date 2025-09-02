@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { setRoi, setMeasurement, refreshPreview, clearMeasurement } from '../store/measurement.actions';
+import { setRoi, setMeasurement, refreshPreview, clearMeasurement, clearExternalMeasurement } from '../store/measurement.actions';
 import { AppState } from '../store';
 import { MeasurementService } from '../services/measurement.service';
 import { environment } from '../../environments/environment';
@@ -32,8 +32,9 @@ export class VideoViewerComponent implements AfterViewInit, OnDestroy {
   triggerAI() {
     if (!this.roi) return;
     
-    // Schritt 1: Ergebniswert löschen
+    // Schritt 1: Ergebniswerte und externes Measurement löschen
     this.store.dispatch(clearMeasurement());
+    this.store.dispatch(clearExternalMeasurement());
     
     // Schritt 2: Aktuelles Stream-Bild laden und verarbeiten
     const currentStreamImage = new Image();
