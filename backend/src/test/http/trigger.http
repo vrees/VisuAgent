@@ -1,0 +1,98 @@
+### Health check for trigger API
+GET http://localhost:8082/api/trigger/health
+Accept: application/json
+
+> {%
+    client.test("Status ist 200", function () {
+        client.assert(response.status === 200, "Status ist nicht 200!");
+    });
+%}
+
+###
+
+### Successful trigger request (requires existing calibration)
+POST http://localhost:8082/api/trigger
+Content-Type: application/json
+
+{
+  "orderNumber": "d4",
+  "equipmentNumber": "g2"
+}
+
+> {%
+    client.test("Status ist 200", function () {
+        client.assert(response.status === 200, "Status ist nicht 200!");
+        client.assert(response.body.status === "success", "Status ist nicht success!");
+        client.assert(response.body.sessionId !== null, "SessionId ist null!");
+    });
+%}
+
+###
+
+### Trigger request with non-existent calibration (should return 404)
+POST http://localhost:8082/api/trigger
+Content-Type: application/json
+
+{
+  "orderNumber": "nonexistent",
+  "equipmentNumber": "eq999"
+}
+
+> {%
+    client.test("Status ist 404", function () {
+        client.assert(response.status === 404, "Status ist nicht 404!");
+        client.assert(response.body.status === "not_found", "Status ist nicht not_found!");
+    });
+%}
+
+###
+
+### Invalid request - missing orderNumber
+POST http://localhost:8082/api/trigger
+Content-Type: application/json
+
+{
+  "equipmentNumber": "eq999"
+}
+
+> {%
+    client.test("Status ist 400", function () {
+        client.assert(response.status === 400, "Status ist nicht 400!");
+    });
+%}
+
+###
+
+### Invalid request - empty orderNumber
+POST http://localhost:8082/api/trigger
+Content-Type: application/json
+
+{
+  "orderNumber": "",
+  "equipmentNumber": "eq999"
+}
+
+> {%
+    client.test("Status ist 400", function () {
+        client.assert(response.status === 400, "Status ist nicht 400!");
+    });
+%}
+
+###
+
+### Invalid request - orderNumber with special characters
+POST http://localhost:8082/api/trigger
+Content-Type: application/json
+
+{
+  "orderNumber": "test@123",
+  "equipmentNumber": "eq999"
+}
+
+> {%
+    client.test("Status ist 400", function () {
+        client.assert(response.status === 400, "Status ist nicht 400!");
+    });
+%}
+
+###

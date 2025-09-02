@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Test for VisuAgent</title>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .status.connected { background-color: #d4edda; color: #155724; }
+        .status.disconnected { background-color: #f8d7da; color: #721c24; }
+        .messages { border: 1px solid #ddd; height: 300px; overflow-y: auto; padding: 10px; margin: 10px 0; }
+        .message { margin: 5px 0; padding: 5px; border-bottom: 1px solid #eee; }
+        .message.measurement { background-color: #e7f3ff; }
+        .message.status { background-color: #fff3cd; }
+        button { margin: 5px; padding: 8px 16px; }
+        input, textarea { width: 300px; margin: 5px; padding: 5px; }
+        .timestamp { color: #666; font-size: 0.8em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>VisuAgent WebSocket Test</h1>
+        
+        <div id="connectionStatus" class="status disconnected">
+            Not Connected
+        </div>
+        
+        <div>
+            <button id="connectBtn">Connect</button>
+            <button id="disconnectBtn" disabled>Disconnect</button>
+            <button id="pingBtn" disabled>Ping</button>
+        </div>
+        
+        <div>
+            <h3>Test Trigger API</h3>
+            <input id="orderNumber" placeholder="Order Number" value="test123">
+            <input id="equipmentNumber" placeholder="Equipment Number" value="eq999">
+            <button id="triggerBtn">Trigger Measurement</button>
+        </div>
+        
+        <div>
+            <h3>Messages</h3>
+            <button id="clearBtn">Clear Messages</button>
+            <div id="messages" class="messages"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script>
+        let stompClient = null;
+        
+        function setConnectionStatus(connected) {
+            const status = document.getElementById('connectionStatus');
+            const connectBtn = document.getElementById('connectBtn');
+            const disconnectBtn = document.getElementById('disconnectBtn');
+            const pingBtn = document.getElementById('pingBtn');
+            
+            if (connected) {
+                status.textContent = 'Connected to WebSocket';
+                status.className = 'status connected';
+                connectBtn.disabled = true;
+                disconnectBtn.disabled = false;
+                pingBtn.disabled = false;
+            } else {
+                status.textContent = 'Not Connected';
+                status.className = 'status disconnected';
+                connectBtn.disabled = false;
+                disconnectBtn.disabled = true;
+                pingBtn.disabled = true;
+            }
+        }
+        
+        function addMessage(type, data) {
+            const messages = document.getElementById('messages');
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            
+            if (type === 'measurement') {
+                message.innerHTML = `
+                    <div><strong>Measurement Result</strong> <span class="timestamp">${timestamp}</span></div>
+                    <div>Value: ${data.value}</div>
+                    <div>Confidence: ${(data.confidence * 100).toFixed(1)}%</div>
+                    <div>Order: ${data.orderNumber}, Equipment: ${data.equipmentNumber}</div>
+                    <div>Session: ${data.sessionId}</div>
+                    <div>Source: ${data.triggerSource}</div>
+                `;
+            } else if (type === 'status') {
+                message.innerHTML = `
+                    <div><strong>Status</strong> <span class="timestamp">${timestamp}</span></div>
+                    <div>Type: ${data.status}</div>
+                    <div>Message: ${data.message}</div>
+                    ${data.sessionId ? `<div>Session: ${data.sessionId}</div>` : ''}
+                `;
+            } else {
+                message.innerHTML = `
+                    <div><strong>${type}</strong> <span class="timestamp">${timestamp}</span></div>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            }
+            
+            messages.appendChild(message);
+            messages.scrollTop = messages.scrollHeight;
+        }
+        
+        function connect() {
+            const socket = new SockJS('http://localhost:8082/ws');
+            stompClient = Stomp.over(socket);
+            
+            stompClient.connect({}, function(frame) {
+                console.log('Connected: ' + frame);
+                setConnectionStatus(true);
+                
+                // Subscribe to measurement results
+                stompClient.subscribe('/topic/measurement', function(message) {
+                    const data = JSON.parse(message.body);
+                    console.log('Received measurement:', data);
+                    addMessage('measurement', data);
+                });
+                
+                // Subscribe to status messages
+                stompClient.subscribe('/topic/status', function(message) {
+                    const data = JSON.parse(message.body);
+                    console.log('Received status:', data);
+                    addMessage('status', data);
+                });
+                
+                addMessage('info', { message: 'Connected and subscribed to topics' });
+            }, function(error) {
+                console.log('Connection error: ' + error);
+                setConnectionStatus(false);
+                addMessage('error', { message: 'Connection failed: ' + error });
+            });
+        }
+        
+        function disconnect() {
+            if (stompClient !== null) {
+                stompClient.disconnect();
+            }
+            setConnectionStatus(false);
+            addMessage('info', { message: 'Disconnected' });
+        }
+        
+        function sendPing() {
+            if (stompClient && stompClient.connected) {
+                stompClient.send('/app/ping', {}, 'Hello from test client');
+                addMessage('info', { message: 'Ping sent' });
+            }
+        }
+        
+        function triggerMeasurement() {
+            const orderNumber = document.getElementById('orderNumber').value;
+            const equipmentNumber = document.getElementById('equipmentNumber').value;
+            
+            if (!orderNumber || !equipmentNumber) {
+                alert('Please enter both order number and equipment number');
+                return;
+            }
+            
+            const data = {
+                orderNumber: orderNumber,
+                equipmentNumber: equipmentNumber
+            };
+            
+            fetch('http://localhost:8082/api/trigger', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Trigger response:', data);
+                addMessage('trigger', data);
+            })
+            .catch(error => {
+                console.error('Trigger error:', error);
+                addMessage('error', { message: 'Trigger failed: ' + error });
+            });
+        }
+        
+        // Event listeners
+        document.getElementById('connectBtn').addEventListener('click', connect);
+        document.getElementById('disconnectBtn').addEventListener('click', disconnect);
+        document.getElementById('pingBtn').addEventListener('click', sendPing);
+        document.getElementById('triggerBtn').addEventListener('click', triggerMeasurement);
+        document.getElementById('clearBtn').addEventListener('click', function() {
+            document.getElementById('messages').innerHTML = '';
+        });
+        
+        // Auto-connect on page load
+        // connect();
+    </script>
+</body>
+</html>

@@ -37,7 +37,7 @@ Accept: application/json
 ###
 
 ### Kalibrierung nach ID abrufen
-GET http://localhost:8082/api/calibration/hugo1382/eq666555
+GET http://localhost:8082/api/calibration/d4/g2
 Accept: application/json
 
 > {%

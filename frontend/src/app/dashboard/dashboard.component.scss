@@ -6,13 +6,19 @@
   min-height: 100vh;
 }
 
-.dashboard-container h1 {
-  text-align: center;
-  color: #2c3e50;
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 40px;
+}
+
+.dashboard-header h1 {
+  color: #2c3e50;
   font-weight: 300;
   font-size: 2.5em;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 0;
 }
 
 .dashboard-grid {

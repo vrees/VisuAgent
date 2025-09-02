@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
     selector: 'app-root',
-    template: `<app-dashboard></app-dashboard>`,
+    template: `<router-outlet></router-outlet>`,
     styles: [`
       :host {
         display: block;

@@ -4,6 +4,7 @@ import { AppState } from '../store';
 import { combineLatest, Subscription } from 'rxjs';
 import { Actions, ofType } from '@ngrx/effects';
 import { refreshPreview } from '../store/measurement.actions';
+import { WebSocketService } from '../services/websocket.service';
 
 @Component({
     selector: 'app-preview',
@@ -15,20 +16,40 @@ import { refreshPreview } from '../store/measurement.actions';
           <img [src]="roiImageUrl" style="max-width: 100%; max-height: 120px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);" alt="Selected ROI">
           
           <div class="result-section">
-            <h3 class="result-title">Erkannter Wert</h3>
+            <h3 class="result-title">
+              {{ currentExternalMeasurement ? 'Externer Trigger' : 'Erkannter Wert' }}
+            </h3>
             <div class="result-value">
-              <ng-container *ngIf="currentValue !== null; else processingOrNoResult">
-                {{ currentValue }}
+              <ng-container *ngIf="getDisplayValue() !== null; else processingOrNoResult">
+                {{ getDisplayValue() }}
               </ng-container>
               <ng-template #processingOrNoResult>
                 ?
               </ng-template>
             </div>
-            <div class="confidence-section" *ngIf="currentConfidence !== null">
+            <div class="confidence-section" *ngIf="getDisplayConfidence() !== null">
               <span class="confidence-label">Konfidenz:</span>
-              <span class="confidence-value" [ngClass]="getConfidenceClass(currentConfidence)">
-                {{ (currentConfidence * 100) | number:'1.0-0' }}%
+              <span class="confidence-value" [ngClass]="getConfidenceClass(getDisplayConfidence()!)">
+                {{ (getDisplayConfidence()! * 100) | number:'1.0-0' }}%
               </span>
+            </div>
+            <div class="external-info" *ngIf="currentExternalMeasurement">
+              <div class="info-row">
+                <span class="info-label">Auftragsnummer:</span>
+                <span class="info-value">{{ currentExternalMeasurement.orderNumber }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Gerätenummer:</span>
+                <span class="info-value">{{ currentExternalMeasurement.equipmentNumber }}</span>
+              </div>
+              <div class="info-row" *ngIf="currentExternalMeasurement.triggerSource">
+                <span class="info-label">Quelle:</span>
+                <span class="info-value">{{ currentExternalMeasurement.triggerSource }}</span>
+              </div>
+              <div class="info-row" *ngIf="currentExternalMeasurement.timestamp">
+                <span class="info-label">Zeit:</span>
+                <span class="info-value">{{ formatTimestamp(currentExternalMeasurement.timestamp) }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -129,6 +150,38 @@ import { refreshPreview } from '../store/measurement.actions';
         color: #f44336;
         background: rgba(244, 67, 54, 0.2);
       }
+      
+      .external-info {
+        margin-top: 15px;
+        padding: 15px;
+        background: rgba(0, 100, 200, 0.1);
+        border-radius: 8px;
+        border: 1px solid rgba(0, 100, 200, 0.3);
+      }
+      
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+      
+      .info-row:last-child {
+        margin-bottom: 0;
+      }
+      
+      .info-label {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 12px;
+        font-weight: 500;
+      }
+      
+      .info-value {
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 600;
+        font-family: 'Courier New', monospace;
+      }
     `],
     standalone: false
 })
@@ -138,15 +191,18 @@ export class PreviewComponent implements OnDestroy {
   value$;
   confidence$;
   roi$;
+  externalMeasurement$;
   roiImageUrl: string | null = null;
   currentValue: number | null = null;
   currentConfidence: number | null = null;
+  currentExternalMeasurement: any = null;
   private subscription = new Subscription();
 
-  constructor(private store: Store<AppState>, private actions$: Actions) {
+  constructor(private store: Store<AppState>, private actions$: Actions, private webSocketService: WebSocketService) {
     this.value$ = this.store.pipe(select(state => state.measurement.value));
     this.confidence$ = this.store.pipe(select(state => state.measurement.confidence));
     this.roi$ = this.store.pipe(select(state => state.measurement.roi));
+    this.externalMeasurement$ = this.store.pipe(select(state => state.measurement.externalMeasurement));
     
     // Value and confidence subscriptions
     this.subscription.add(
@@ -160,6 +216,23 @@ export class PreviewComponent implements OnDestroy {
       this.confidence$.subscribe(confidence => {
         this.currentConfidence = confidence;
         console.log('Confidence updated:', confidence);
+      })
+    );
+    
+    // Direct WebSocket external measurement subscription since Effects are disabled
+    this.subscription.add(
+      this.webSocketService.getMeasurementResults().subscribe(externalMeasurement => {
+        this.currentExternalMeasurement = externalMeasurement;
+        console.log('External measurement updated:', externalMeasurement);
+        console.log('ROI Image Base64 length:', externalMeasurement.roiImageBase64?.length || 'null/undefined');
+        
+        // If external measurement includes ROI image, display it
+        if (externalMeasurement.roiImageBase64) {
+          console.log('Updating ROI preview from external measurement');
+          this.updateRoiPreviewFromBase64(externalMeasurement.roiImageBase64);
+        } else {
+          console.warn('External measurement does not contain roiImageBase64');
+        }
       })
     );
     
@@ -191,6 +264,40 @@ export class PreviewComponent implements OnDestroy {
     this.subscription.unsubscribe();
     if (this.roiImageUrl) {
       URL.revokeObjectURL(this.roiImageUrl);
+    }
+  }
+
+  private updateRoiPreviewFromBase64(base64Image: string): void {
+    try {
+      // Altes URL freigeben
+      if (this.roiImageUrl) {
+        URL.revokeObjectURL(this.roiImageUrl);
+      }
+      
+      let cleanBase64 = base64Image;
+      
+      // Entfernen des Data-URL Präfixes falls vorhanden
+      if (base64Image.startsWith('data:image')) {
+        const base64Index = base64Image.indexOf(',');
+        if (base64Index !== -1) {
+          cleanBase64 = base64Image.substring(base64Index + 1);
+        }
+      }
+      
+      // Base64 zu Blob konvertieren
+      const byteCharacters = atob(cleanBase64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'image/jpeg' });
+      
+      // Neue URL erstellen
+      this.roiImageUrl = URL.createObjectURL(blob);
+      console.log('ROI preview updated from external measurement');
+    } catch (error) {
+      console.error('Error updating ROI preview from base64:', error);
     }
   }
 
@@ -238,5 +345,42 @@ export class PreviewComponent implements OnDestroy {
     if (confidence >= 0.8) return 'confidence-high';
     if (confidence >= 0.5) return 'confidence-medium';
     return 'confidence-low';
+  }
+
+  getDisplayValue(): number | null {
+    // External measurements have priority over manual measurements
+    if (this.currentExternalMeasurement && 
+        this.currentExternalMeasurement.value !== null && 
+        this.currentExternalMeasurement.value !== undefined) {
+      return this.currentExternalMeasurement.value;
+    }
+    return this.currentValue;
+  }
+
+  getDisplayConfidence(): number | null {
+    // External measurements have priority over manual measurements
+    if (this.currentExternalMeasurement && 
+        this.currentExternalMeasurement.confidence !== null && 
+        this.currentExternalMeasurement.confidence !== undefined) {
+      return this.currentExternalMeasurement.confidence;
+    }
+    return this.currentConfidence;
+  }
+
+  formatTimestamp(timestamp: string | null): string {
+    if (!timestamp) return '';
+    try {
+      const date = new Date(timestamp);
+      return date.toLocaleString('de-DE', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    } catch (error) {
+      return timestamp;
+    }
   }
 }

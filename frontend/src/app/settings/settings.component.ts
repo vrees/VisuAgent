@@ -183,10 +183,10 @@ export class SettingsComponent {
                 alert('Projekt erfolgreich angelegt');
                 console.log('Calibration created:', calibration);
 
-                // Clear form after successful creation
-                this.orderNumber = '';
-                this.equipmentNumber = '';
-                this.remark = '';
+                // Keep form data after successful creation
+                // this.orderNumber = '';
+                // this.equipmentNumber = '';  
+                // this.remark = '';
             },
             error: (error) => {
                 alert('Fehler beim Anlegen des Projekts');
