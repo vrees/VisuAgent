@@ -15,8 +15,8 @@ POST http://localhost:8082/api/trigger
 Content-Type: application/json
 
 {
-  "orderNumber": "d4",
-  "equipmentNumber": "g2"
+  "orderNumber": "abcd5678",
+  "equipmentNumber": "xyz888777"
 }
 
 > {%
