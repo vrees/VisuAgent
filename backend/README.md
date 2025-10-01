@@ -8,6 +8,7 @@ Ensure that the environment variable `OPENAI_API_KEY` is set for OpenAI integrat
 
 ```sh
 cat /etc/environment
+sudo apt install v4l-utils
 ```
 
 ## Build
