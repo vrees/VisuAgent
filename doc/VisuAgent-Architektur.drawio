@@ -32,7 +32,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="pL_chH0rR-R8eD5-Gsro-7" value="API Call OpenAI&amp;nbsp;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#00A651;strokeWidth=3;fontSize=20;fontColor=#00A651;endArrow=block;endFill=1;" edge="1" parent="1" source="pL_chH0rR-R8eD5-Gsro-5" target="pL_chH0rR-R8eD5-Gsro-9">
-          <mxGeometry x="0.1765" y="-25" relative="1" as="geometry">
+          <mxGeometry x="0.4286" y="-25" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
@@ -60,18 +60,6 @@
         </mxCell>
         <mxCell id="pL_chH0rR-R8eD5-Gsro-19" value="&lt;b&gt;&lt;font&gt;VisuAgent - Systemarchitektur&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#0066CC;fontSize=32;" vertex="1" parent="1">
           <mxGeometry x="380" y="30" width="580" height="97" as="geometry" />
-        </mxCell>
-        <mxCell id="pL_chH0rR-R8eD5-Gsro-21" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" edge="1" parent="1">
-          <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="390" y="580" as="sourcePoint" />
-            <mxPoint x="440" y="530" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="pL_chH0rR-R8eD5-Gsro-22" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;" edge="1" parent="1">
-          <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="390" y="580" as="sourcePoint" />
-            <mxPoint x="440" y="530" as="targetPoint" />
-          </mxGeometry>
         </mxCell>
         <mxCell id="pL_chH0rR-R8eD5-Gsro-26" value="" style="endArrow=none;dashed=1;html=1;rounded=0;strokeWidth=5;" edge="1" parent="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
