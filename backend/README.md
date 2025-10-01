@@ -2,6 +2,14 @@
 
 This is the backend service for VisuAgent, built with Spring Boot 3.5.4 and Java 21.
 
+## Environment Setup
+
+Ensure that the environment variable `OPENAI_API_KEY` is set for OpenAI integration:
+
+```sh
+cat /etc/environment
+```
+
 ## Build
 
 ```sh
@@ -21,11 +29,13 @@ This is the backend service for VisuAgent, built with Spring Boot 3.5.4 and Java
 ```
 
 ## API
+
 - Video stream: `/api/stream`
 - Measurement extraction: `/api/measurements`
 - OpenAPI/Swagger UI: `/swagger-ui.html`
 
 ## Notes
+
 - Uses in-memory database (H2) for demo purposes.
 - Main class: `de.testo.cal.visuagent.VisuagentApplication`
 - All endpoints start with `/api/`
@@ -36,4 +46,5 @@ This is the backend service for VisuAgent, built with Spring Boot 3.5.4 and Java
 
 ---
 
-Alle öffentlichen Methoden und Klassen sind auf Englisch dokumentiert, der Quellcode ist auf Englisch, Kommentare auf Deutsch.
+Alle öffentlichen Methoden und Klassen sind auf Englisch dokumentiert, der Quellcode ist auf Englisch, Kommentare auf
+Deutsch.
