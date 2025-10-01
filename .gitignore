@@ -1,4 +1,4 @@
-.idea/
+# Track specific .idea files needed for project
 !.idea/modules.xml
 !.idea/misc.xml
 !.idea/*.iml
@@ -11,6 +11,7 @@
 .idea/sqldialects.xml
 .idea/usage.statistics.xml
 .idea/httpRequests/
+.idea/compiler.xml
 
 *.class
 

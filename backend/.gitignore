@@ -2,22 +2,6 @@
 /target/
 !.mvn/wrapper/maven-wrapper.jar
 
-# === IntelliJ IDEA ===
-# Ignore all .idea files except those useful for sharing
-.idea/
-!.idea/modules.xml
-!.idea/misc.xml
-!.idea/*.iml
-!.idea/vcs.xml
-
-# Ignore workspace (user-specific)
-.idea/workspace.xml
-.idea/dataSources.xml
-.idea/jpa-buddy.xml
-.idea/sqldialects.xml
-.idea/usage.statistics.xml
-.idea/httpRequests/
-
 # Eclipse
 .project
 .classpath
