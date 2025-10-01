@@ -12,6 +12,9 @@
 
 # Ignore workspace (user-specific)
 .idea/workspace.xml
+.idea/dataSources.xml
+.idea/jpa-buddy.xml
+.idea/sqldialects.xml
 .idea/usage.statistics.xml
 .idea/httpRequests/
 
