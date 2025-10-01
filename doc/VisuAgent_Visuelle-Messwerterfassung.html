@@ -1,384 +1,592 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VisuAgent - Visuelle Messwerterfassung</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.0.4/dist/reset.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.0.4/dist/reveal.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.0.4/dist/theme/white.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         :root {
             --testo-blue: #0066CC;
             --testo-green: #00A651;
             --testo-dark: #1a1a1a;
-            --testo-light: #f5f5f5;
+            --testo-light: #f8f9fa;
+            --testo-gray: #6c757d;
         }
 
-        .reveal {
+        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--testo-dark);
+            background: white;
         }
 
-        .reveal h1, .reveal h2, .reveal h3 {
-            color: var(--testo-blue);
-            text-transform: none;
-            font-weight: 600;
-        }
-
-        .reveal h1 {
-            font-size: 2.5em;
-            margin-bottom: 0.5em;
-        }
-
-        .reveal h2 {
-            font-size: 1.8em;
-            margin-bottom: 0.3em;
-        }
-
-        .reveal h3 {
-            font-size: 1.3em;
-            color: var(--testo-green);
-            font-weight: 500;
-        }
-
-        .reveal section {
-            text-align: left;
-        }
-
-        .reveal .title-slide {
-            text-align: center;
+        .slide {
+            width: 100%;
+            min-height: 100vh;
+            padding: 60px 80px;
+            page-break-after: always;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            height: 100%;
+            position: relative;
         }
 
-        .reveal .title-slide h1 {
-            margin-bottom: 0.2em;
-            background: linear-gradient(135deg, var(--testo-blue), var(--testo-green));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        /* Slide 1 - Title */
+        .slide-1 {
+            background: linear-gradient(135deg, #0066CC 0%, #00A651 100%);
+            color: white;
+            text-align: center;
+            align-items: center;
         }
 
-        .reveal ul {
-            margin-left: 1.5em;
+        .slide-1 h1 {
+            font-size: 4em;
+            font-weight: 700;
+            margin-bottom: 2em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
-        .reveal li {
-            margin-bottom: 0.8em;
-            line-height: 1.6;
+        .slide-1 h2 {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 1em;
+            opacity: 0.99;
         }
 
-        .reveal strong {
+        .slide-1 h3 {
+            font-size: 1.5em;
+            font-weight: 300;
+            padding: 20px 40px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .slide-1 .footer-info {
+            position: absolute;
+            bottom: 30px;
+            font-size: 3em;
+            font-weight: 300;
+            opacity: 1;
+        }
+
+        .slide-1 .customer {
+            left: 30px;
+        }
+
+        .slide-1 .date {
+            right: 30px;
+        }
+
+        /* General slide styling */
+        .slide h2 {
             color: var(--testo-blue);
+            font-size: 2.5em;
+            margin-bottom: 0.8em;
+            border-bottom: 4px solid var(--testo-green);
+            padding-bottom: 0.3em;
         }
 
-        .architecture-box {
-            background: var(--testo-light);
-            border: 2px solid var(--testo-blue);
-            border-radius: 8px;
-            padding: 15px;
-            margin: 10px 0;
-            text-align: center;
-            font-weight: 600;
-        }
-
-        .flow-arrow {
-            text-align: center;
+        .slide h3 {
             color: var(--testo-green);
             font-size: 1.5em;
-            margin: 5px 0;
+            margin: 1em 0 0.5em 0;
         }
 
-        .screenshot-container {
-            margin: 20px auto;
-            max-width: 100%;
+        .slide ul {
+            margin-left: 2em;
+            margin-top: 0.5em;
         }
 
-        .screenshot-container img {
-            max-width: 100%;
-            height: auto;
-            border: 2px solid var(--testo-blue);
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        .slide li {
+            margin-bottom: 0.8em;
+            line-height: 1.8;
+            font-size: 1.1em;
         }
 
-        .section-marker {
-            display: inline-block;
-            background: var(--testo-blue);
-            color: white;
-            padding: 3px 10px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            margin-bottom: 5px;
-        }
-
-        .issues-list li, .features-list li {
-            margin-bottom: 1em;
-            padding-left: 0.5em;
-        }
-
-        .backup-links a {
+        .slide strong {
             color: var(--testo-blue);
-            text-decoration: none;
-            border-bottom: 1px solid var(--testo-green);
         }
 
-        .backup-links a:hover {
-            color: var(--testo-green);
-        }
-
-        .architecture-diagram {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px auto;
-        }
-
-        .arch-layer {
-            display: flex;
-            justify-content: space-around;
-            margin: 15px 0;
-            gap: 20px;
-        }
-
-        .arch-component {
-            flex: 1;
-            background: linear-gradient(135deg, #f0f8ff, #e6f3ff);
-            border: 2px solid var(--testo-blue);
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            font-weight: 600;
+        .slide code {
+            background: var(--testo-light);
+            padding: 2px 8px;
+            border-radius: 4px;
             color: var(--testo-dark);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-family: 'Courier New', monospace;
         }
 
-        .arch-component.highlight {
-            background: linear-gradient(135deg, #e6ffe6, #ccffcc);
+        /* Architecture Diagram */
+        .architecture {
+            margin: 2em 0;
+            padding: 2em;
+            background: var(--testo-light);
+            border-radius: 12px;
+        }
+
+        .arch-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .arch-box {
+            flex: 1;
+            background: white;
+            border: 3px solid var(--testo-blue);
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            max-width: 300px;
+        }
+
+        .arch-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0,102,204,0.2);
+        }
+
+        .arch-box.highlight {
             border-color: var(--testo-green);
+            background: linear-gradient(135deg, #ffffff 0%, #f0fff4 100%);
+        }
+
+        .arch-box.webhook {
+            border-color: #ff9900;
+            background: linear-gradient(135deg, #ffffff 0%, #fff8f0 100%);
+        }
+
+        .arch-icon {
+            font-size: 3em;
+            margin-bottom: 0.3em;
+        }
+
+        .arch-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--testo-dark);
+            margin-bottom: 0.3em;
+        }
+
+        .arch-desc {
+            font-size: 0.9em;
+            color: var(--testo-gray);
         }
 
         .arch-arrow {
             text-align: center;
             color: var(--testo-green);
-            font-size: 2em;
+            font-size: 3em;
             margin: 10px 0;
         }
 
-        .explanation-box {
-            background: #f0f8ff;
-            border-left: 4px solid var(--testo-blue);
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 4px;
+        /* Screenshot */
+        .screenshot {
+            margin: 2em 0;
+            text-align: center;
         }
 
-        .explanation-box .title {
+        .screenshot img {
+            max-width: 100%;
+            height: auto;
+            border: 3px solid var(--testo-blue);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        /* Explanation boxes */
+        .explanation {
+            background: linear-gradient(to right, var(--testo-light) 0%, white 100%);
+            border-left: 5px solid var(--testo-blue);
+            padding: 20px 25px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .explanation-title {
             font-weight: 700;
             color: var(--testo-blue);
-            margin-bottom: 5px;
+            font-size: 1.2em;
+            margin-bottom: 0.5em;
+        }
+
+        .explanation-content {
+            color: var(--testo-dark);
+            line-height: 1.7;
+        }
+
+        /* Issue boxes */
+        .issue-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px 20px;
+            margin: 12px 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .issue-label {
+            font-weight: 700;
+            color: #856404;
+        }
+
+        /* Feature boxes */
+        .feature-box {
+            background: #d1ecf1;
+            border-left: 5px solid #0066CC;
+            padding: 15px 20px;
+            margin: 12px 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .feature-title {
+            font-weight: 700;
+            color: var(--testo-blue);
+            font-size: 1.1em;
+        }
+
+        /* Links */
+        .link-box {
+            background: var(--testo-light);
+            padding: 20px 25px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 2px solid var(--testo-blue);
+        }
+
+        .link-box a {
+            color: var(--testo-blue);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            word-break: break-all;
+        }
+
+        .link-box a:hover {
+            color: var(--testo-green);
+            text-decoration: underline;
+        }
+
+        .link-desc {
+            margin-top: 10px;
+            color: var(--testo-gray);
+            font-size: 0.95em;
+        }
+
+        /* Slide numbers */
+        .slide-number {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            color: var(--testo-gray);
+            font-size: 0.9em;
+        }
+
+        .slide-1 .slide-number {
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Print styles */
+        @media print {
+            .slide {
+                page-break-after: always;
+                min-height: 100vh;
+            }
+
+            .slide:last-child {
+                page-break-after: auto;
+            }
+
+            body {
+                background: white;
+            }
+        }
+
+        /* Screen-only navigation hint */
+        @media screen {
+            .nav-hint {
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0,0,0,0.7);
+                color: white;
+                padding: 10px 20px;
+                border-radius: 20px;
+                font-size: 0.9em;
+                z-index: 1000;
+            }
+        }
+
+        @media print {
+            .nav-hint {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="reveal">
-        <div class="slides">
 
-            <!-- Slide 1: Titelblatt -->
-            <section class="title-slide">
-                <h1>VisuAgent</h1>
-                <h2>Visuelle Messwerterfassung und Auswertung mit KI</h2>
-                <h3>Kunde: Testo Industrial Services</h3>
-            </section>
-
-            <!-- Slide 2: Architektur -->
-            <section>
-                <h2>Architektur</h2>
-                <div class="architecture-diagram">
-                    <div class="arch-layer">
-                        <div class="arch-component">
-                            <div style="font-size: 2em; margin-bottom: 10px;">🌐</div>
-                            <strong>Browser</strong>
-                            <div style="font-size: 0.8em; margin-top: 5px;">Benutzer-Interface</div>
-                        </div>
-                    </div>
-
-                    <div class="arch-arrow">↕</div>
-
-                    <div class="arch-layer">
-                        <div class="arch-component">
-                            <div style="font-size: 2em; margin-bottom: 10px;">⚡</div>
-                            <strong>Angular Frontend</strong>
-                            <div style="font-size: 0.8em; margin-top: 5px;">Port 4200<br>Video & UI</div>
-                        </div>
-                    </div>
-
-                    <div class="arch-arrow">↕</div>
-
-                    <div class="arch-layer">
-                        <div class="arch-component highlight">
-                            <div style="font-size: 2em; margin-bottom: 10px;">🚀</div>
-                            <strong>Spring Boot Backend</strong>
-                            <div style="font-size: 0.8em; margin-top: 5px;">Port 8082<br>REST API & Logic</div>
-                        </div>
-                    </div>
-
-                    <div class="arch-arrow">↕</div>
-
-                    <div class="arch-layer">
-                        <div class="arch-component" style="flex: 0.8;">
-                            <div style="font-size: 2em; margin-bottom: 10px;">💾</div>
-                            <strong>H2 Database</strong>
-                            <div style="font-size: 0.8em; margin-top: 5px;">In-Memory</div>
-                        </div>
-                        <div class="arch-component highlight" style="flex: 1.2;">
-                            <div style="font-size: 2em; margin-bottom: 10px;">🤖</div>
-                            <strong>OpenAI API</strong>
-                            <div style="font-size: 0.8em; margin-top: 5px;">Vision Model (gpt-4o)<br>Messwertextraktion</div>
-                        </div>
-                    </div>
-
-                    <div class="arch-arrow">↓</div>
-
-                    <div class="arch-layer">
-                        <div class="arch-component" style="background: linear-gradient(135deg, #fff5e6, #ffe6cc); border-color: #ff9900;">
-                            <div style="font-size: 2em; margin-bottom: 10px;">🔔</div>
-                            <strong>Webhook</strong>
-                            <div style="font-size: 0.8em; margin-top: 5px;">POST /api/trigger<br>localhost:8082</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Slide 3: Dashboard -->
-            <section>
-                <h2>Dashboard</h2>
-                <div class="screenshot-container">
-                    <img src="pic/VisuAgent-Screenshot_2.png" alt="VisuAgent Dashboard">
-                </div>
-            </section>
-
-            <!-- Slide 3b: Dashboard Erklärung -->
-            <section>
-                <h2>Dashboard - Bereiche</h2>
-                <div class="explanation-box">
-                    <div class="title">🎥 Live Camera Stream (links oben, blau)</div>
-                    Zeigt den Live-Video-Feed der USB-Kamera. Der Benutzer kann hier einen Bereich (ROI - Region of Interest) auf dem Display des Messgeräts auswählen.
-                </div>
-                <div class="explanation-box">
-                    <div class="title">👁 Preview (links unten, cyan)</div>
-                    Vorschau des ausgewählten Bildausschnitts mit dem erkannten Messwert. Zeigt das extrahierte Display-Bild und den von der KI erkannten Wert (hier: 12.2).
-                </div>
-                <div class="explanation-box">
-                    <div class="title">⚙ Settings (rechts, pink)</div>
-                    Konfigurationsbereich mit:
-                    <ul style="font-size: 0.9em; margin-top: 8px;">
-                        <li><strong>Auftragsnummer</strong>: Eindeutige ID des Kalibrierauftrags</li>
-                        <li><strong>Seriennummer</strong>: Identifikation des Prüflings</li>
-                        <li><strong>Bemerkung</strong>: Zusätzliche Notizen</li>
-                        <li><strong>Koordinaten (X/Y, Width/Height)</strong>: ROI-Position und -Größe</li>
-                        <li><strong>Buttons</strong>: "Wert erkennen" & "Projekt anlegen"</li>
-                    </ul>
-                </div>
-            </section>
-
-            <!-- Slide 4: Open Issues -->
-            <section>
-                <h2>Open Issues</h2>
-                <ul class="issues-list">
-                    <li><strong>Status:</strong> Prototyp / Proof of Concept (POC)</li>
-                    <li><strong>Ziel-Architektur:</strong> Klärung der Produktionsumgebung und Skalierung erforderlich</li>
-                    <li><strong>LLM Model:</strong> Derzeit <code>gpt-4o</code> - Evaluation alternativer Modelle hinsichtlich Kosten und Genauigkeit</li>
-                    <li><strong>Kamera Spezifikation:</strong>
-                        <ul style="margin-top: 0.5em;">
-                            <li>Schnittstelle: USB vs. Ethernet?</li>
-                            <li>Erforderliche Bildqualität und Auflösung</li>
-                            <li>Umgebungsbedingungen im Labor</li>
-                        </ul>
-                    </li>
-                    <li><strong>Security:</strong> Authentifizierung, Autorisierung, API-Key-Management, HTTPS</li>
-                </ul>
-            </section>
-
-            <!-- Slide 5: Feature Requests -->
-            <section>
-                <h2>Feature-Requests</h2>
-                <ul class="features-list">
-                    <li><strong>Integration mit Testo-Backendsystemen:</strong><br>
-                    Anbindung an bestehende Kalibrier- und ERP-Systeme für nahtlosen Datenfluss</li>
-
-                    <li><strong>Erweiterung um Soll-Messwerte:</strong><br>
-                    Eingabe von Referenzwerten und automatischer Soll-Ist-Vergleich mit Toleranzprüfung</li>
-
-                    <li><strong>Darstellung aller Messpunkte:</strong><br>
-                    Tabellarische Übersicht mit:
-                        <ul style="margin-top: 0.5em; font-size: 0.95em;">
-                            <li>Soll- und Ist-Werten</li>
-                            <li>Abweichungen und Status (OK/NOK)</li>
-                            <li>Zugeordneten Kameraausschnitten</li>
-                            <li>Export-Funktion (PDF, Excel)</li>
-                        </ul>
-                    </li>
-                </ul>
-            </section>
-
-            <!-- Slide 6: Backup -->
-            <section>
-                <h2>Backup & Ressourcen</h2>
-                <div class="explanation-box backup-links">
-                    <div class="title">📊 OpenAI Usage Monitoring</div>
-                    <a href="https://platform.openai.com/settings/organization/usage" target="_blank">
-                        https://platform.openai.com/settings/organization/usage
-                    </a>
-                    <div style="margin-top: 10px; font-size: 0.9em;">
-                        Überwachung des API-Verbrauchs und der Kosten in Echtzeit
-                    </div>
-                </div>
-
-                <div class="explanation-box backup-links" style="margin-top: 20px;">
-                    <div class="title">💰 OpenAI Pricing</div>
-                    <a href="https://platform.openai.com/docs/pricing" target="_blank">
-                        https://platform.openai.com/docs/pricing
-                    </a>
-                    <div style="margin-top: 10px; font-size: 0.9em;">
-                        <strong>GPT-4o Vision Preise (Stand 2025):</strong><br>
-                        • Input: $2.50 / 1M tokens<br>
-                        • Output: $10.00 / 1M tokens<br>
-                        • Bilder: Variable Kosten basierend auf Auflösung
-                    </div>
-                </div>
-
-                <div class="explanation-box" style="margin-top: 20px; background: #e6ffe6;">
-                    <div class="title">💡 Kostenoptimierung</div>
-                    Potentielle Maßnahmen:
-                    <ul style="font-size: 0.9em; margin-top: 8px;">
-                        <li>Bildkompression vor API-Call</li>
-                        <li>Caching häufiger Anfragen</li>
-                        <li>Batch-Verarbeitung</li>
-                        <li>Alternative zu gpt-4o: gpt-4o-mini (günstiger)</li>
-                    </ul>
-                </div>
-            </section>
-
-        </div>
+    <!-- Slide 1: Titelblatt -->
+    <div class="slide slide-1">
+        <h1>VisuAgent</h1>
+        <h2>Visuelle Messwerterfassung und Auswertung mit KI</h2>
+        <div class="footer-info customer">Testo Industrial Services</div>
+        <div class="footer-info date">Oktober 2025</div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.0.4/dist/reveal.js"></script>
-    <script>
-        Reveal.initialize({
-            hash: true,
-            slideNumber: true,
-            transition: 'slide',
-            width: 1280,
-            height: 720,
-            margin: 0.04,
-            center: false,
-            controls: true,
-            progress: true,
-            navigationMode: 'linear'
-        });
-    </script>
+    <!-- Slide 2: Architektur -->
+    <div class="slide">
+        <h2>Architektur</h2>
+        <div class="architecture">
+            <!-- Layer 1: Browser -->
+            <div class="arch-row">
+                <div class="arch-box">
+                    <div class="arch-icon">🌐</div>
+                    <div class="arch-title">Browser</div>
+                    <div class="arch-desc">Benutzer-Interface</div>
+                </div>
+            </div>
+
+            <div class="arch-arrow">↓</div>
+
+            <!-- Layer 2: Frontend -->
+            <div class="arch-row">
+                <div class="arch-box">
+                    <div class="arch-icon">⚡</div>
+                    <div class="arch-title">Angular Frontend</div>
+                    <div class="arch-desc">Port 4200<br>Video Stream & UI</div>
+                </div>
+            </div>
+
+            <div class="arch-arrow">↓</div>
+
+            <!-- Layer 3: Backend -->
+            <div class="arch-row">
+                <div class="arch-box highlight">
+                    <div class="arch-icon">🚀</div>
+                    <div class="arch-title">Spring Boot Backend</div>
+                    <div class="arch-desc">Port 8082<br>REST API & Geschäftslogik</div>
+                </div>
+            </div>
+
+            <div class="arch-arrow">↓</div>
+
+            <!-- Layer 4: Database & AI -->
+            <div class="arch-row">
+                <div class="arch-box">
+                    <div class="arch-icon">💾</div>
+                    <div class="arch-title">H2 Database</div>
+                    <div class="arch-desc">In-Memory<br>Datenspeicherung</div>
+                </div>
+                <div class="arch-box highlight">
+                    <div class="arch-icon">🤖</div>
+                    <div class="arch-title">OpenAI Vision API</div>
+                    <div class="arch-desc">Model: gpt-4o<br>Messwertextraktion</div>
+                </div>
+            </div>
+
+            <div class="arch-arrow">↓</div>
+
+            <!-- Layer 5: Webhook -->
+            <div class="arch-row">
+                <div class="arch-box webhook">
+                    <div class="arch-icon">🔔</div>
+                    <div class="arch-title">Webhook Trigger</div>
+                    <div class="arch-desc">POST /api/trigger<br>http://localhost:8082</div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">2 / 6</div>
+    </div>
+
+    <!-- Slide 3: Dashboard Screenshot -->
+    <div class="slide">
+        <h2>Dashboard</h2>
+        <div class="screenshot">
+            <img src="pic/VisuAgent-Screenshot_2.png" alt="VisuAgent Dashboard">
+        </div>
+        <div class="slide-number">3 / 6</div>
+    </div>
+
+    <!-- Slide 4: Dashboard Erklärung -->
+    <div class="slide">
+        <h2>Dashboard - Funktionsbereiche</h2>
+
+        <div class="explanation">
+            <div class="explanation-title">🎥 Live Camera Stream (links oben, blau)</div>
+            <div class="explanation-content">
+                Echtzeit-Video-Feed der USB-Kamera mit Möglichkeit zur Auswahl einer Region of Interest (ROI) auf dem Display des Messgeräts.
+            </div>
+        </div>
+
+        <div class="explanation">
+            <div class="explanation-title">👁️ Preview (links unten, cyan)</div>
+            <div class="explanation-content">
+                Vorschau des ausgewählten Bildausschnitts mit automatisch erkanntem Messwert. Zeigt das extrahierte Display-Bild und den von der KI identifizierten Wert (Beispiel: <strong>12.2</strong>).
+            </div>
+        </div>
+
+        <div class="explanation">
+            <div class="explanation-title">⚙️ Settings (rechts, pink)</div>
+            <div class="explanation-content">
+                <strong>Konfigurationsbereich mit:</strong>
+                <ul style="margin-top: 8px; margin-left: 20px;">
+                    <li><strong>Auftragsnummer</strong> – Eindeutige Identifikation des Kalibrierauftrags</li>
+                    <li><strong>Seriennummer</strong> – Geräteidentifikation des Prüflings</li>
+                    <li><strong>Bemerkung</strong> – Freitextfeld für Zusatzinformationen</li>
+                    <li><strong>Koordinaten</strong> – X/Y Position und Width/Height der ROI</li>
+                    <li><strong>Aktionen</strong> – Buttons "Wert erkennen" und "Projekt anlegen"</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide-number">4 / 6</div>
+    </div>
+
+    <!-- Slide 5: Open Issues -->
+    <div class="slide">
+        <h2>Open Issues</h2>
+
+        <div class="issue-box">
+            <span class="issue-label">Status:</span> Aktuell im Status <strong>Prototyp / Proof of Concept (POC)</strong>
+        </div>
+
+        <div class="issue-box">
+            <span class="issue-label">Ziel-Architektur:</span> Klärung der Produktionsumgebung erforderlich
+            <ul style="margin-top: 8px; margin-left: 20px;">
+                <li>On-Premise vs. Cloud-Deployment</li>
+                <li>Skalierungskonzept für mehrere Messpunkte</li>
+                <li>Hochverfügbarkeit und Redundanz</li>
+            </ul>
+        </div>
+
+        <div class="issue-box">
+            <span class="issue-label">LLM Model:</span> Derzeit <code>gpt-4o</code> im Einsatz
+            <ul style="margin-top: 8px; margin-left: 20px;">
+                <li>Evaluation alternativer Modelle (Kosten vs. Genauigkeit)</li>
+                <li>Möglichkeit eines selbst gehosteten Modells?</li>
+            </ul>
+        </div>
+
+        <div class="issue-box">
+            <span class="issue-label">Kamera Spezifikation:</span>
+            <ul style="margin-top: 8px; margin-left: 20px;">
+                <li><strong>Schnittstelle:</strong> USB vs. Ethernet (GigE Vision)?</li>
+                <li><strong>Bildqualität:</strong> Erforderliche Auflösung und Framerate</li>
+                <li><strong>Umgebung:</strong> Beleuchtung und Positionierung im Labor</li>
+            </ul>
+        </div>
+
+        <div class="issue-box">
+            <span class="issue-label">Security:</span> Sicherheitskonzept erforderlich
+            <ul style="margin-top: 8px; margin-left: 20px;">
+                <li>Authentifizierung und Autorisierung</li>
+                <li>API-Key-Management und Verschlüsselung</li>
+                <li>HTTPS/TLS für alle Verbindungen</li>
+            </ul>
+        </div>
+
+        <div class="slide-number">5 / 6</div>
+    </div>
+
+    <!-- Slide 6: Feature Requests -->
+    <div class="slide">
+        <h2>Feature-Requests</h2>
+
+        <div class="feature-box">
+            <div class="feature-title">🔗 Integration mit Testo-Backendsystemen</div>
+            <p style="margin-top: 8px;">
+                Nahtlose Anbindung an bestehende Kalibrier- und ERP-Systeme für automatischen Datenfluss und durchgängige Dokumentation.
+            </p>
+        </div>
+
+        <div class="feature-box">
+            <div class="feature-title">📊 Erweiterung um Soll-Messwerte</div>
+            <p style="margin-top: 8px;">
+                <strong>Funktionsumfang:</strong>
+            </p>
+            <ul style="margin-left: 20px; margin-top: 5px;">
+                <li>Eingabe von Referenzwerten (Sollwerte)</li>
+                <li>Automatischer Soll-Ist-Vergleich</li>
+                <li>Toleranzprüfung mit konfigurierbaren Grenzwerten</li>
+                <li>Visualisierung von Abweichungen (OK/NOK Status)</li>
+            </ul>
+        </div>
+
+        <div class="feature-box">
+            <div class="feature-title">📋 Darstellung aller Messpunkte</div>
+            <p style="margin-top: 8px;">
+                <strong>Tabellarische Übersicht mit:</strong>
+            </p>
+            <ul style="margin-left: 20px; margin-top: 5px;">
+                <li>Vollständige Liste aller Messpunkte</li>
+                <li>Soll- und Ist-Werte mit Abweichung</li>
+                <li>Status-Indikator (OK/NOK mit Farbcodierung)</li>
+                <li>Zugeordnete Kameraausschnitte als Thumbnail</li>
+                <li>Export-Funktionen (PDF-Protokoll, Excel-Tabelle)</li>
+                <li>Historische Ansicht vergangener Messungen</li>
+            </ul>
+        </div>
+
+        <div class="slide-number">6 / 6</div>
+    </div>
+
+    <!-- Slide 7: Backup & Ressourcen -->
+    <div class="slide">
+        <h2>Backup & Ressourcen</h2>
+
+        <div class="link-box">
+            <div style="font-weight: 700; color: var(--testo-blue); margin-bottom: 8px;">📊 OpenAI Usage Monitoring</div>
+            <a href="https://platform.openai.com/settings/organization/usage" target="_blank">
+                https://platform.openai.com/settings/organization/usage
+            </a>
+            <div class="link-desc">
+                Echtzeit-Überwachung des API-Verbrauchs, Kostenanalyse und Usage-Statistiken für die Organisation.
+            </div>
+        </div>
+
+        <div class="link-box">
+            <div style="font-weight: 700; color: var(--testo-blue); margin-bottom: 8px;">💰 OpenAI Pricing</div>
+            <a href="https://platform.openai.com/docs/pricing" target="_blank">
+                https://platform.openai.com/docs/pricing
+            </a>
+            <div class="link-desc">
+                <strong>GPT-4o Vision Preise (Stand 2025):</strong><br>
+                • Input: $2.50 / 1M Tokens<br>
+                • Output: $10.00 / 1M Tokens<br>
+                • Bilder: Variable Kosten basierend auf Auflösung (Detail-Level)
+            </div>
+        </div>
+
+        <div class="explanation" style="background: #d4edda; border-left-color: var(--testo-green);">
+            <div class="explanation-title" style="color: var(--testo-green);">💡 Kostenoptimierungs-Strategien</div>
+            <div class="explanation-content">
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li><strong>Bildkompression:</strong> Optimierung der Bildgröße vor API-Call (WebP, JPEG mit reduzierter Qualität)</li>
+                    <li><strong>Caching:</strong> Zwischenspeicherung häufig angefragter Messwerte</li>
+                    <li><strong>Batch-Verarbeitung:</strong> Mehrere Messungen in einem API-Call</li>
+                    <li><strong>Alternative Modelle:</strong> gpt-4o-mini (60-80% günstiger, leicht reduzierte Genauigkeit)</li>
+                    <li><strong>ROI-Optimierung:</strong> Minimierung des übertragenen Bildausschnitts</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide-number">7 / 6</div>
+    </div>
+
+    <div class="nav-hint">
+        💡 Im Browser ansehen oder drucken (Strg+P / Cmd+P) → Als PDF speichern
+    </div>
+
 </body>
 </html>

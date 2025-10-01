@@ -1,0 +1,94 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0" version="28.2.5">
+  <diagram id="VskNQAHojDS6FRfv_JAq" name="Page-1">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="pL_chH0rR-R8eD5-Gsro-20" value="&lt;ul&gt;&lt;li&gt;&lt;h4 align=&quot;right&quot;&gt;&lt;font style=&quot;font-size: 24px;&quot;&gt;Linux Computer&amp;nbsp;&lt;/font&gt;&lt;/h4&gt;&lt;/li&gt;&lt;/ul&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=#fff2cc;strokeColor=#d6b656;align=right;" vertex="1" parent="1">
+          <mxGeometry x="440" y="290" width="460" height="460" as="geometry" />
+        </mxCell>
+        <mxCell id="pL_chH0rR-R8eD5-Gsro-1" value="&lt;b&gt;Browser&lt;/b&gt;&lt;br&gt;Benutzer-Interface" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#0066CC;strokeWidth=3;fontSize=14;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="580" y="136" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="pL_chH0rR-R8eD5-Gsro-2" value="HTTP/HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#00A651;strokeWidth=3;fontSize=20;fontColor=#00A651;endArrow=block;endFill=1;" edge="1" parent="1" source="pL_chH0rR-R8eD5-Gsro-1" target="pL_chH0rR-R8eD5-Gsro-3">
+          <mxGeometry x="-0.5789" y="70" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pL_chH0rR-R8eD5-Gsro-3" value="&lt;b&gt;Angular Frontend&lt;/b&gt;&lt;br&gt;Port 4200&lt;br&gt;Dashboard &amp;amp; Video Stream" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#0066CC;strokeWidth=3;fontSize=14;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="560" y="330" width="220" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="pL_chH0rR-R8eD5-Gsro-4" value="REST API&lt;br&gt;/api/measurements&lt;br&gt;/api/stream" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#00A651;strokeWidth=3;fontSize=20;fontColor=#00A651;endArrow=block;endFill=1;" edge="1" parent="1" source="pL_chH0rR-R8eD5-Gsro-3" target="pL_chH0rR-R8eD5-Gsro-5">
+          <mxGeometry x="-0.04" y="-100" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pL_chH0rR-R8eD5-Gsro-5" value="&lt;b&gt;Spring Boot Backend&lt;/b&gt;&lt;br&gt;Port 8082&lt;br&gt;Java 21" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#00A651;strokeWidth=3;fontSize=14;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="540" y="575" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="pL_chH0rR-R8eD5-Gsro-6" value="JPA" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0066CC;strokeWidth=2;fontSize=20;fontColor=#0066CC;endArrow=block;endFill=1;dashed=1;" edge="1" parent="1" source="pL_chH0rR-R8eD5-Gsro-5" target="pL_chH0rR-R8eD5-Gsro-8">
+          <mxGeometry x="0.6774" y="25" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pL_chH0rR-R8eD5-Gsro-7" value="API Call OpenAI&amp;nbsp;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#00A651;strokeWidth=3;fontSize=20;fontColor=#00A651;endArrow=block;endFill=1;" edge="1" parent="1" source="pL_chH0rR-R8eD5-Gsro-5" target="pL_chH0rR-R8eD5-Gsro-9">
+          <mxGeometry x="0.1765" y="-25" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pL_chH0rR-R8eD5-Gsro-8" value="&lt;b&gt;H2 Database&lt;/b&gt;&lt;br&gt;In-Memory&lt;br&gt;Datenspeicherung&lt;br&gt;Measurements&lt;br&gt;Projects" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#E3F2FD;strokeColor=#0066CC;strokeWidth=3;fontSize=13;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="70" y="555" width="160" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="pL_chH0rR-R8eD5-Gsro-9" value="&lt;b&gt;OpenAI Vision API&lt;/b&gt;&lt;br&gt;Model: gpt-4o&lt;br&gt;Messwertextraktion&lt;br&gt;Bildanalyse" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FF9800;strokeWidth=3;fontSize=14;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="545" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="pL_chH0rR-R8eD5-Gsro-10" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Trigger Event&lt;/font&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#FF9900;strokeWidth=3;fontSize=11;fontColor=#FF9900;endArrow=block;endFill=1;" edge="1" parent="1" source="pL_chH0rR-R8eD5-Gsro-5" target="pL_chH0rR-R8eD5-Gsro-11">
+          <mxGeometry x="0.7083" y="70" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pL_chH0rR-R8eD5-Gsro-11" value="&lt;b&gt;Webhook Trigger&lt;/b&gt;&lt;br&gt;POST /api/trigger&lt;br&gt;http://localhost:8082&lt;br&gt;Notification System" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FF9900;strokeWidth=3;fontSize=13;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="560" y="880" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="pL_chH0rR-R8eD5-Gsro-12" value="&lt;b&gt;USB Kamera&lt;/b&gt;&lt;br&gt;Live Video Stream&lt;br&gt;Display-Erfassung" style="shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#F3E5F5;strokeColor=#9C27B0;strokeWidth=2;fontSize=13;fontColor=#1A1A1A;rotation=0;" vertex="1" parent="1">
+          <mxGeometry x="70" y="340" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="pL_chH0rR-R8eD5-Gsro-13" value="Video Feed" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9C27B0;strokeWidth=2;fontSize=20;fontColor=#9C27B0;endArrow=block;endFill=1;dashed=1;entryX=0.005;entryY=0.188;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="pL_chH0rR-R8eD5-Gsro-12" target="pL_chH0rR-R8eD5-Gsro-20">
+          <mxGeometry x="-0.3197" y="-20" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pL_chH0rR-R8eD5-Gsro-19" value="&lt;b&gt;&lt;font&gt;VisuAgent - Systemarchitektur&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#0066CC;fontSize=32;" vertex="1" parent="1">
+          <mxGeometry x="380" y="30" width="580" height="97" as="geometry" />
+        </mxCell>
+        <mxCell id="pL_chH0rR-R8eD5-Gsro-21" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="580" as="sourcePoint" />
+            <mxPoint x="440" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pL_chH0rR-R8eD5-Gsro-22" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="580" as="sourcePoint" />
+            <mxPoint x="440" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pL_chH0rR-R8eD5-Gsro-26" value="" style="endArrow=none;dashed=1;html=1;rounded=0;strokeWidth=5;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="80" y="820" as="sourcePoint" />
+            <mxPoint x="1330" y="820" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rosG1nS9dL7Hexa02QYw-1" value="&lt;div style=&quot;background-color:#1e1f22;color:#bcbec4&quot;&gt;&lt;pre style=&quot;font-family:&#39;JetBrains Mono&#39;,monospace;font-size:9,8pt;&quot;&gt;----------- Request: -----------------&lt;br&gt;&lt;br&gt;POST http://localhost:8082/api/trigger&lt;br&gt;{&lt;br&gt;  &quot;orderNumber&quot;: &quot;abcd1234&quot;,&lt;br&gt;  &quot;equipmentNumber&quot;: &quot;xyz887766&quot;&lt;br&gt;}&lt;/pre&gt;&lt;/div&gt;" style="text;whiteSpace=wrap;html=1;fontSize=17;" vertex="1" parent="1">
+          <mxGeometry x="70" y="870" width="420" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="rosG1nS9dL7Hexa02QYw-3" value="&lt;div style=&quot;background-color:#1e1f22;color:#bcbec4&quot;&gt;&lt;pre style=&quot;font-family:&#39;JetBrains Mono&#39;,monospace;font-size:9,8pt;&quot;&gt;--------- Response: --------------------------------&lt;br&gt;{&lt;br&gt;  &quot;status&quot;: &quot;success&quot;,&lt;br&gt;  &quot;message&quot;: &quot;Measurement triggered &quot;,&lt;br&gt;  &quot;sessionId&quot;: &quot;1c7b036a-936d-41ac-bcf8-c78dacb36531&quot;,&lt;br&gt;  &quot;timestamp&quot;: &quot;2025-10-01T17:16:09.58879194&quot;,&lt;br&gt;  &quot;value&quot;: 407.7,&lt;br&gt;  &quot;confidence&quot;: 0.9,&lt;br&gt;  &quot;roiImageBase64&quot;: &quot;data:image/jpeg;base64,/9j/4....&quot;,&lt;br&gt;  &quot;orderNumber&quot;: &quot;abcd5678&quot;,&lt;br&gt;  &quot;equipmentNumber&quot;: &quot;xyz888777&quot;&lt;br&gt;}&lt;/pre&gt;&lt;/div&gt;" style="text;whiteSpace=wrap;html=1;fontSize=17;" vertex="1" parent="1">
+          <mxGeometry x="820" y="830" width="570" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="rosG1nS9dL7Hexa02QYw-4" value="Testo Infrastruktur" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fontColor=#000000;darkOpacity=0.05;fillColor=#FFF9B2;strokeColor=none;fillStyle=solid;direction=west;gradientDirection=north;gradientColor=#FFF2A1;shadow=1;size=20;pointerEvents=1;fontSize=24;" vertex="1" parent="1">
+          <mxGeometry x="70" y="827" width="290" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
