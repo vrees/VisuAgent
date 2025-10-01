@@ -1,4 +1,17 @@
-# Compiled class file
+.idea/
+!.idea/modules.xml
+!.idea/misc.xml
+!.idea/*.iml
+!.idea/vcs.xml
+
+# Ignore workspace (user-specific)
+.idea/workspace.xml
+.idea/dataSources.xml
+.idea/jpa-buddy.xml
+.idea/sqldialects.xml
+.idea/usage.statistics.xml
+.idea/httpRequests/
+
 *.class
 
 # Log file
