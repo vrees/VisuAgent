@@ -125,12 +125,12 @@ import { WebSocketService } from '../services/websocket.service';
       
       .confidence-label {
         color: rgba(255, 255, 255, 0.9);
-        font-size: 14px;
+        font-size: 18px;
         font-weight: 500;
       }
       
       .confidence-value {
-        font-size: 16px;
+        font-size: 18px;
         font-weight: bold;
         padding: 4px 8px;
         border-radius: 4px;
@@ -172,13 +172,13 @@ import { WebSocketService } from '../services/websocket.service';
       
       .info-label {
         color: rgba(255, 255, 255, 0.8);
-        font-size: 12px;
+        font-size: 18px;
         font-weight: 500;
       }
       
       .info-value {
         color: #ffffff;
-        font-size: 13px;
+        font-size: 18px;
         font-weight: 600;
         font-family: 'Courier New', monospace;
       }

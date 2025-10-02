@@ -420,6 +420,14 @@
             <ul style="margin-top: 8px; margin-left: 20px;">
                 <li>Evaluation alternativer Modelle (Kosten vs. Genauigkeit)</li>
                 <li>Möglichkeit eines selbst gehosteten Modells?</li>
+                <li><strong>Prompt:</strong></strong></br>Extract the measurement value from the image.</br>
+                    Return the result as JSON using following fields:</br>
+                    value (float) and confidence (float between 0.0 and 1.0)</br>
+                    The confidence indicates how certain you are about the recognized value:</br>
+                    1.0 = completely certain, clear and unambiguous reading</br>
+                    0.8-0.9 = very confident, minor uncertainty</br>
+                    0.5-0.7 = moderate confidence, some ambiguity</br>
+                    0.0-0.4 = low confidence, unclear or hard to read</li>
             </ul>
         </div>
 

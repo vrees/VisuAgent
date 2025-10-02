@@ -1,5 +1,5 @@
 .dashboard-container {
-  padding: 12px;
+  padding: 8px;
   max-width: 1400px;
   margin: 0 auto;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -10,7 +10,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 40px;
+  margin-bottom: 16px;
 }
 
 .dashboard-header h1 {
@@ -25,8 +25,8 @@
   display: grid;
   grid-template-columns: 2fr 1fr;
   grid-template-rows: auto auto;
-  gap: 6px;
-  grid-template-areas: 
+  gap: 4px;
+  grid-template-areas:
     "video settings"
     "preview settings";
 }
@@ -124,13 +124,13 @@
 .dashboard-section {
   // Innenabstand für bessere Darstellung
   ::ng-deep mat-card {
-    padding: 24px !important;
+    padding: 12px !important;
     margin: 0;
   }
 
   // Sanftere Übergänge für Eingabefelder
   ::ng-deep mat-form-field {
-    margin-bottom: 20px !important;
+    margin-bottom: 8px !important;
 
     .mat-mdc-form-field-subscript-wrapper {
       display: none; // Entfernt den zusätzlichen Platz unter Eingabefeldern
